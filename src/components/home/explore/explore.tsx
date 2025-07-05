@@ -23,7 +23,6 @@ const Explore = () => {
       }}
     >
       <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-20 lg:gap-28">
-        {/* Left Side */}
         <div className="text-center md:text-left">
           <h2 className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight mb-10">
             Let’s dive in and<br /> learn the basics

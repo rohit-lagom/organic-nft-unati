@@ -25,7 +25,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
 
   return (
     <>
-      {/* Desktop Sidebar */}
       <aside className="hidden md:block w-64 bg-[#1e1e1e] border-r border-white/10 p-6">
         <h2 className="text-lg font-semibold mb-8 text-white">Dashboard</h2>
         <nav className="flex flex-col gap-3">
@@ -48,7 +47,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
         </nav>
       </aside>
 
-      {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 flex">
           <div className="w-64 bg-[#1e1e1e] border-r border-white/10 p-6 min-h-full">
@@ -82,7 +80,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
             </nav>
           </div>
 
-          {/* Backdrop */}
           <div
             className="flex-1 bg-black/50"
             onClick={() => setSidebarOpen(false)}

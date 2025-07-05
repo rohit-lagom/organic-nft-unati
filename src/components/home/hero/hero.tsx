@@ -117,7 +117,6 @@ export function Hero() {
         </motion.div>
       ))}
 
-      {/* ✅ Hero Content */}
       <div className="text-center z-20 relative max-w-5xl mx-auto mt-24 md:mt-0">
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-extrabold leading-tight">
           From <span className="text-purple-500">imagination</span>{" "}

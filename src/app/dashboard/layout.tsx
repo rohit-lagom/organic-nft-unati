@@ -9,12 +9,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen bg-[#242424] text-white">
-      {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-      {/* Main Content */}
       <div className="flex-1 p-6 md:p-8">
-        {/* Mobile Header */}
         <div className="md:hidden mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <button
