@@ -1,13 +1,19 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, MouseEvent } from 'react';
 import StackIcon from '@/assets/images/create/Stack.svg';
 import DualPhotoIcon from '@/assets/images/create/DualPhoto.svg';
 import SphereIcon from '@/assets/images/create/Sphere.svg';
 import HeroBg from '@/assets/images/HeroBg.png';
 
-const cards = [
+interface Card {
+  title: string;
+  icon: string;
+  hoverBg: string;
+}
+
+const cards: Card[] = [
   {
     title: 'Generate a collection',
     icon: StackIcon,
@@ -39,7 +45,7 @@ export default function Create() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     const { innerWidth, innerHeight } = window;
     const x = (e.clientX / innerWidth - 0.5) * 30;
     const y = (e.clientY / innerHeight - 0.5) * 30;
