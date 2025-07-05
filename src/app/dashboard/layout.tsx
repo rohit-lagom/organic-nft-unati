@@ -1,12 +1,13 @@
 import Sidebar from '@/app/dashboard/_components/sidebar/sidebar';
+import { ReactNode } from 'react';
 
-export default function DashboardLayout({ children }) {
+export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen">
-      <Sidebar/>
+      <Sidebar />
       <div className="flex-1 bg-[#242424] text-white p-8">
         <header className="mb-10">
-          <h1 className="text-4xl font-extrabold">Dashboard </h1>
+          <h1 className="text-4xl font-extrabold">Dashboard</h1>
         </header>
         <main>{children}</main>
       </div>
