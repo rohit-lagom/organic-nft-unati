@@ -5,12 +5,8 @@ import Link from 'next/link';
 
 import left1 from '@/assets/images/left/left1.webp';
 import left2 from '@/assets/images/left/left2.png';
-import left3 from '@/assets/images/left/left3.png';
-import left4 from '@/assets/images/left/left4.webp';
 import right1 from '@/assets/images/right/right1.webp';
 import right2 from '@/assets/images/right/right2.webp';
-import right3 from '@/assets/images/right/right3.webp';
-import right4 from '@/assets/images/right/right4.webp';
 
 const creators = [
   {
