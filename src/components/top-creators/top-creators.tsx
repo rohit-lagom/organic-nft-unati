@@ -3,32 +3,32 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import left1 from '@/assets/images/left/left1.webp';
-import left2 from '@/assets/images/left/left2.png';
-import right1 from '@/assets/images/right/right1.webp';
-import right2 from '@/assets/images/right/right2.webp';
+import creator1 from '@/assets/images/creators/creator1.jpeg';
+import creator2 from '@/assets/images/creators/creator2.jpeg';
+import creator3 from '@/assets/images/creators/creator3.jpeg';
+import creator4 from '@/assets/images/creators/creator4.jpeg';
 
 const creators = [
   {
-    image: left1,
+    image: creator1,
     name: 'Creator A',
     description: 'Digital artist shaping new worlds',
     href: '#',
   },
   {
-    image: right1,
+    image: creator3,
     name: 'Creator B',
     description: 'Crafting immersive NFT drops',
     href: '#',
   },
   {
-    image: left2,
+    image: creator2,
     name: 'Creator C',
     description: 'Transforming code-free experiences',
     href: '#',
   },
   {
-    image: right2,
+    image: creator4,
     name: 'Creator D',
     description: 'Pushing the limits of generative art',
     href: '#',
