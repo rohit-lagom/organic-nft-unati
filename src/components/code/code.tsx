@@ -73,37 +73,7 @@ const features = [
     bg: 'from-pink-400 to-orange-400',
     image: card1,
   },
-  {
-    title: 'Buenoverse',
-    description:
-      'Turn ideas into interactive worlds and games. Collaborate with friends in real-time.',
-    href: '#',
-    bg: 'from-indigo-600 to-purple-700',
-    image: card1,
-  },
-  {
-    title: 'Smart contracts',
-    description:
-      'Easily mint NFTs without code. Create your own smart contract.',
-    href: '#',
-    bg: 'from-blue-400 to-purple-400',
-    image: card1,
-  },
-  {
-    title: 'Forms',
-    description:
-      'Create forms for allowlists, surveys, and more, with wallet checks and Discord roles.',
-    href: '#',
-    bg: 'from-green-400 to-blue-500',
-    image: card1,
-  },  {
-    title: 'Buenoverse',
-    description:
-      'Turn ideas into interactive worlds and games. Collaborate with friends in real-time.',
-    href: '#',
-    bg: 'from-indigo-600 to-purple-700',
-    image: card1,
-  }, 
+ 
 ];
 
 const Code = () => {
