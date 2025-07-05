@@ -6,17 +6,22 @@ import Link from 'next/link';
 import Logo from '@/assets/images/Logo.png';
 import { Menu, X } from 'lucide-react';
 
-const navLinks = [
+interface NavLink {
+  label: string;
+  href: string;
+}
+
+const navLinks: NavLink[] = [
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'Pricing', href: '#' },
   { label: 'Product', href: '#' },
   { label: 'Resources', href: '#' },
 ];
 
-export function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef(null);
+export function Navbar(): JSX.Element {
+  const [scrolled, setScrolled] = useState<boolean>(false);
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -24,10 +29,9 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close on outside click
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setMenuOpen(false);
       }
     };
