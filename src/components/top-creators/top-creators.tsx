@@ -42,7 +42,7 @@ export default function TopCreators() {
         Real stories from top creators 💫
       </h2>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
         {creators.map((creator, idx) => (
           <Link key={idx} href={creator.href} className="group block">
             <div className="rounded-2xl overflow-hidden shadow-lg bg-white/10 backdrop-blur-md border border-white/10 transition-all duration-300 hover:border-purple-500 hover:scale-105 aspect-square">
