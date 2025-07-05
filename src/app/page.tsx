@@ -8,7 +8,7 @@ import { Footer } from "@/components/footer/footer";
 import TopCreators from "@/components/top-creators/top-creators";
 import Create from "@/components/create/create";
 
-export default function Home(): JSX.Element {
+export default function Home() {
   return (
     <main>
       <Navbar />
