@@ -72,20 +72,20 @@ export function Hero() {
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 1, delay: idx * 0.1 }}
     style={{ y }}
-    className={`absolute hidden md:block z-10 ${
+    className={`absolute hidden lg:block z-10 ${
       idx === 0
-        ? '-top-6 -left-15 w-20 h-20 lg:w-48 lg:h-36'
+        ? '-top-6 -left-15 md:w-32 md:h-20 lg:w-48 lg:h-36'
         : idx === 1
-        ? 'top-18 -left-15 z-20 w-28 h-32 lg:w-56 lg:h-76'
+        ? 'top-18 -left-15 z-20 md:w-32 md:h-32 lg:w-56 lg:h-76'
         : idx === 2
-        ? 'top-12 left-20  w-24 h-24 lg:w-56 lg:h-64'
+        ? 'top-12 left-20  md:w-32 md:h-24 lg:w-56 lg:h-64'
         : idx === 3
-        ? 'top-88  -left-26 w-24 h-24 lg:w-56 lg:h-64'
+        ? 'top-88  -left-26 md:w-32 md:h-24 lg:w-56 lg:h-64'
         : idx === 4
-        ? 'top-68 left-18 w-24 h-24 lg:w-56 lg:h-76'
+        ? 'top-68 left-18 md:w-32 md:h-24 lg:w-56 lg:h-76'
         : idx === 5
-        ? 'top-[33rem] -left-20 w-24 h-24 lg:w-56 lg:h-58'
-        : 'top-[32rem] left-16 w-24 h-24 lg:w-48 lg:h-56'
+        ? 'top-[33rem] -left-20 md:w-32 md:h-24 lg:w-56 lg:h-58'
+        : 'top-[32rem] left-16 md:w-32 md:h-24 lg:w-48 lg:h-56'
     }`}
   >
     <Image src={img} alt={`Left ${idx + 1}`} className="w-full h-full" />
@@ -99,19 +99,19 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: idx * 0.1 }}
           style={{ y }}
-          className={`absolute hidden md:block z-10 ${idx === 0
-            ? '-top-2 -right-5 w-20 h-20 lg:w-48 lg:h-36'
+          className={`absolute hidden lg:block z-10 ${idx === 0
+            ? '-top-2 -right-5 md:w-20 md:h-20 lg:w-48 lg:h-36'
             : idx === 2
-              ? 'top-16 -right-15 w-28 h-32 lg:w-56 lg:h-96'
+              ? 'top-16 -right-15 md:w-28 md:h-32 lg:w-56 lg:h-96'
               : idx === 1
-                ? 'top-24 right-20 w-24 h-24 lg:w-56 lg:h-64'
+                ? 'top-24 right-20 md:w-24 md:h-24 lg:w-56 lg:h-64'
                 : idx === 4
-                  ? 'top-[24.5rem] -right-26 w-24 h-24 lg:w-56 lg:h-64'
+                  ? 'top-[24.5rem] -right-26 md:w-24 md:h-24 lg:w-56 lg:h-64'
                   : idx === 3
-                    ? 'top-70 right-20 w-24 h-24 lg:w-56 lg:h-84'
+                    ? 'top-70 right-20 md:w-24 md:h-24 lg:w-56 lg:h-84'
                     : idx === 6
-                      ? 'top-[36rem] -right-20 w-24 h-24 lg:w-56 lg:h-56'
-                      : 'top-[35rem] right-24 w-24 h-24 lg:w-48 lg:h-56'
+                      ? 'top-[36rem] -right-20 md:w-24 md:h-24 lg:w-56 lg:h-56'
+                      : 'top-[35rem] right-24 md:w-24 md:h-24 lg:w-48 lg:h-56'
             }`}
         >
           <Image src={img} alt={`Right ${idx + 1}`} className="w-full h-full" />
