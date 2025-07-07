@@ -72,10 +72,10 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: idx * 0.1 }}
           style={{ y }}
-          className={`absolute hidden lg:block z-10 ${idx === 0
-            ? 'top-8 left-4 w-20 h-20 lg:w-36 lg:h-36'
+          className={`absolute hidden md:block z-10 ${idx === 0
+            ? 'top-8 left-0 w-20 h-20 lg:w-36 lg:h-36'
             : idx === 1
-              ? 'top-44 left-2 w-24 h-24 lg:w-48 lg:h-48'
+              ? 'top-24 -left-12 w-34 h-44 lg:w-58 lg:h-78'
               : idx === 2
                 ? 'top-44 left-40 w-24 h-24 lg:w-48 lg:h-48'
                 : idx === 3
@@ -98,19 +98,19 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: idx * 0.1 }}
           style={{ y }}
-          className={`absolute hidden lg:block z-10 ${idx === 0
-            ? 'top-8 right-4 w-20 h-20 lg:w-36 lg:h-36'
-            : idx === 1
-              ? 'top-44 right-2 w-24 h-24 lg:w-48 lg:h-48'
-              : idx === 2
-                ? 'top-44 right-40 w-24 h-24 lg:w-48 lg:h-48'
-                : idx === 3
-                  ? 'top-[22rem] right-2 w-24 h-24 lg:w-48 lg:h-48'
-                  : idx === 4
-                    ? 'top-[22rem] right-40 w-24 h-24 lg:w-48 lg:h-48'
-                    : idx === 5
-                      ? 'top-[34rem] right-8 w-24 h-24 lg:w-48 lg:h-48'
-                      : 'top-[34rem] right-44 w-24 h-24 lg:w-48 lg:h-48'
+          className={`absolute hidden md:block z-10 ${idx === 0
+            ? '-top-2 -right-5 w-20 h-20 lg:w-48 lg:h-36'
+            : idx === 2
+              ? 'top-16 -right-15 w-28 h-32 lg:w-58 lg:h-96'
+              : idx === 1
+                ? 'top-24 right-20 w-24 h-24 lg:w-58 lg:h-64'
+                : idx === 4
+                  ? 'top-[24.5rem] -right-26 w-24 h-24 lg:w-58 lg:h-64'
+                  : idx === 3
+                    ? 'top-70 right-20 w-24 h-24 lg:w-58 lg:h-84'
+                    : idx === 6
+                      ? 'top-[36rem] -right-20 w-24 h-24 lg:w-58 lg:h-58'
+                      : 'top-[35rem] right-24 w-24 h-24 lg:w-48 lg:h-58'
             }`}
         >
           <Image src={img} alt={`Right ${idx + 1}`} className="w-full h-full" />
