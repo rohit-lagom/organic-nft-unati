@@ -17,9 +17,9 @@ export default function LogoutButton() {
       localStorage.removeItem('organic-user');
       localStorage.removeItem('organic-wallet');
       router.push('/');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setError(err.message || 'Logout failed');
+      setError('Logout failed');
     }
   };
 

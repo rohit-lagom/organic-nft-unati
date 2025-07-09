@@ -1,5 +1,7 @@
 'use client';
 
+import { ExternalProvider } from '@ethersproject/providers';
+
 import { useWeb3AuthUser } from '@web3auth/modal/react';
 import { useAccount, useBalance } from 'wagmi';
 import Image from 'next/image';
@@ -59,7 +61,7 @@ export default function DashboardPage() {
     const fetchNetwork = async () => {
       try {
         const provider = await connector?.getProvider();
-        const chainIdHex = await (provider as any)?.request({ method: 'eth_chainId' });
+const chainIdHex = await (provider as ExternalProvider)?.request?.({ method: 'eth_chainId' });
         const chainId = parseInt(chainIdHex, 16);
         const networks: Record<number, string> = {
           1: 'Ethereum Mainnet',
