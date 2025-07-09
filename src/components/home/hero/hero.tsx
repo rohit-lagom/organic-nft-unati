@@ -3,6 +3,10 @@
 import Image from 'next/image';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
+import { useWeb3AuthConnect } from '@web3auth/modal/react';
+interface HeroProps {
+  onCreateClick?: () => void;
+}
 import HeroBg from '@/assets/images/HeroBg.png';
 
 import left1 from '@/assets/images/left/left1.webp';
@@ -20,17 +24,18 @@ import right4 from '@/assets/images/right/right4.webp';
 import right5 from '@/assets/images/right/right5.webp';
 import right6 from '@/assets/images/right/right6.webp';
 import right7 from '@/assets/images/right/right7.webp';
+import Button from '@/components/common/button/button';
 
 const leftImages = [left1, left2, left3, left4, left5, left6, left7];
 const rightImages = [right1, right2, right3, right4, right5, right6, right7];
-const mobileImages = [left2, left3, left4, left5,right2, right3, right4,right5, right6];
+const mobileImages = [left2, left3, left4, left5, right2, right3, right4, right5, right6];
 const stats = [
   { value: '+ $20 million', label: 'in creator earnings' },
   { value: '+ 2 million', label: 'tokens generated' },
   { value: '+ 21,000', label: 'happy creators' },
 ];
 
-export function Hero() {
+export function Hero({ onCreateClick }: HeroProps) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const y = useTransform(scrollYProgress, [0, 1], [0, -80]);
@@ -65,32 +70,31 @@ export function Hero() {
 
 
 
-    {leftImages.map((img, idx) => (
-  <motion.div
-    key={`left-${idx}`}
-    initial={{ opacity: 0, y: 80 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 1, delay: idx * 0.1 }}
-    style={{ y }}
-    className={`absolute hidden lg:block z-10 ${
-      idx === 0
-        ? '-top-6 -left-15 md:w-32 md:h-20 lg:w-48 lg:h-36'
-        : idx === 1
-        ? 'top-18 -left-15 z-20 md:w-32 md:h-32 lg:w-56 lg:h-76'
-        : idx === 2
-        ? 'top-12 left-20  md:w-32 md:h-24 lg:w-56 lg:h-64'
-        : idx === 3
-        ? 'top-88  -left-26 md:w-32 md:h-24 lg:w-56 lg:h-64'
-        : idx === 4
-        ? 'top-68 left-18 md:w-32 md:h-24 lg:w-56 lg:h-76'
-        : idx === 5
-        ? 'top-[33rem] -left-20 md:w-32 md:h-24 lg:w-56 lg:h-58'
-        : 'top-[32rem] left-16 md:w-32 md:h-24 lg:w-48 lg:h-56'
-    }`}
-  >
-    <Image src={img} alt={`Left ${idx + 1}`} className="w-full h-full" />
-  </motion.div>
-))}
+      {leftImages.map((img, idx) => (
+        <motion.div
+          key={`left-${idx}`}
+          initial={{ opacity: 0, y: 80 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: idx * 0.1 }}
+          style={{ y }}
+          className={`absolute hidden lg:block z-10 ${idx === 0
+              ? '-top-6 -left-15 md:w-32 md:h-20 lg:w-48 lg:h-36'
+              : idx === 1
+                ? 'top-18 -left-15 z-20 md:w-32 md:h-32 lg:w-56 lg:h-76'
+                : idx === 2
+                  ? 'top-12 left-20  md:w-32 md:h-24 lg:w-56 lg:h-64'
+                  : idx === 3
+                    ? 'top-88  -left-26 md:w-32 md:h-24 lg:w-56 lg:h-64'
+                    : idx === 4
+                      ? 'top-68 left-18 md:w-32 md:h-24 lg:w-56 lg:h-76'
+                      : idx === 5
+                        ? 'top-[33rem] -left-20 md:w-32 md:h-24 lg:w-56 lg:h-58'
+                        : 'top-[32rem] left-16 md:w-32 md:h-24 lg:w-48 lg:h-56'
+            }`}
+        >
+          <Image src={img} alt={`Left ${idx + 1}`} className="w-full h-full" />
+        </motion.div>
+      ))}
 
       {rightImages.map((img, idx) => (
         <motion.div
@@ -129,10 +133,9 @@ export function Hero() {
           Empowering creators to transform ideas into generative art, drops,
           and worlds with zero code.
         </p>
-
-        <button className="mt-8 sm:mt-10 px-8 sm:px-10 py-3 sm:py-4 bg-purple-600 hover:bg-purple-700 text-white text-base sm:text-lg md:text-xl font-semibold rounded-full shadow-md transition">
+        <Button onClick={onCreateClick} className="mt-8 sm:mt-10 px-8 sm:px-10 py-3 sm:py-4 text-base sm:text-lg md:text-xl shadow-md cursor-pointer">
           + Create now
-        </button>
+        </Button>
 
         <div className="mt-16 sm:mt-20 flex flex-col md:flex-row justify-center gap-6 md:gap-8">
           {stats.map((stat, idx) => (

@@ -5,6 +5,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Logo from '@/assets/images/Logo.png';
 import { Menu, X } from 'lucide-react';
+import Button from '@/components/common/button/button';
+interface NavbarProps {
+  onCreateClick?: () => void;
+}
 
 interface NavLink {
   label: string;
@@ -18,7 +22,7 @@ const navLinks: NavLink[] = [
   { label: 'Resources', href: '#' },
 ];
 
-export function Navbar(){
+export function Navbar({ onCreateClick }: NavbarProps){
   const [scrolled, setScrolled] = useState<boolean>(false);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -43,14 +47,11 @@ export function Navbar(){
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [menuOpen]);
 
-  const ctaButton = (
-    <Link
-      href="#"
-      className="inline-flex items-center justify-center px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-full transition w-full md:w-auto"
-    >
-      + Create now
-    </Link>
-  );
+const ctaButton = (
+  <Button fullWidth={true} onClick={onCreateClick} className="md:w-auto">
+    + Create now
+  </Button>
+);
 
   return (
     <header
@@ -78,11 +79,11 @@ export function Navbar(){
         </nav>
 
         <button
-          className="md:hidden text-white cursor-pointer"
+          className="md:hidden  text-white cursor-pointer"
           onClick={() => setMenuOpen((prev) => !prev)}
           aria-label="Toggle Menu"
         >
-          {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {menuOpen ? <X className="w-6 h-6 cursor-pointer" /> : <Menu className="w-6 h-6 cursor-pointer" />}
         </button>
       </div>
 

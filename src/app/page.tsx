@@ -8,12 +8,15 @@ import { Footer } from "@/components/home/footer/footer";
 import TopCreators from "@/components/home/top-creators/top-creators";
 import Create from "@/components/home/create/create";
 import App from "@/components/App";
+import { useWeb3AuthConnect } from "@web3auth/modal/react";
 
 export default function Home() {
+    const { connect } = useWeb3AuthConnect();
+
   return (
     <main>
-      <Navbar />
-      <Hero />
+     <Navbar onCreateClick={connect} />
+      <Hero onCreateClick={connect} />
       <App/>
       <Code />
       <Explore />
