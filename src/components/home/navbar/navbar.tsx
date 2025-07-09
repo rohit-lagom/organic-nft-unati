@@ -106,7 +106,7 @@ export function Navbar() {
             ))}
 
             <Button
-              onClick={() => handleProtectedAction('/')}
+              onClick={() => handleProtectedAction('/dashboard')}
               className="md:w-auto"
               disabled={loading}
             >
