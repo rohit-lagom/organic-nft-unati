@@ -20,7 +20,6 @@ export const metadata: Metadata = {
   description: 'Minimal, Clean NFT Platform',
 };
 
-// eslint-disable-next-line no-undef
 export default async function RootLayout({
   children,
 }: {

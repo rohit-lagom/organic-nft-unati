@@ -6,20 +6,13 @@ import { useRouter } from 'next/navigation';
 import {
   useWeb3AuthConnect,
   useWeb3AuthDisconnect,
-  useWeb3AuthUser,
 } from '@web3auth/modal/react';
-import { useAccount } from 'wagmi';
-import { SendTransaction } from './wagmi/sendTransaction';
-import { Balance } from './wagmi/getBalance';
-import { SwitchChain } from './wagmi/switchNetwork';
 
 export default function App() {
   const { connect, isConnected, loading: connectLoading, error: connectError } =
     useWeb3AuthConnect();
-  const { disconnect, loading: disconnectLoading, error: disconnectError } =
     useWeb3AuthDisconnect();
-  const { userInfo } = useWeb3AuthUser();
-  const { address, connector } = useAccount();
+
   const router = useRouter();
 
   // as soon as we’re connected, send user to /dashboard
