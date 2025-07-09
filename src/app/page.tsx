@@ -7,7 +7,7 @@ import { Hero } from "@/components/home/hero/hero";
 import { Footer } from "@/components/home/footer/footer";
 import TopCreators from "@/components/home/top-creators/top-creators";
 import Create from "@/components/home/create/create";
-import App from "@/components/App";
+// import App from "@/components/App";
 import { useWeb3AuthConnect } from "@web3auth/modal/react";
 
 export default function Home() {
@@ -17,7 +17,7 @@ export default function Home() {
     <main>
      <Navbar  />
       <Hero onCreateClick={connect} />
-      <App/>
+      {/* <App/> */}
       <Code />
       <Explore />
       <TopCreators />
