@@ -57,9 +57,8 @@ export function Navbar() {
     if (!userInfo?.email && !address) {
       try {
         await connect();
-      } catch (_) {
-        console.warn('User cancelled or connection failed');
-        return; // ✅ Do nothing, stay on page
+      } catch (error: unknown) {
+        console.warn('Connection failed', error);
       }
     }
     if (href) {
@@ -78,11 +77,10 @@ export function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled
             ? 'bg-[#242424] backdrop-blur-lg border-b border-white/10 shadow-md'
             : 'bg-transparent'
-        }`}
+          }`}
       >
         <div className="flex items-center justify-between px-6 md:px-8 py-4 md:py-5">
           <Link href="/" className="flex items-center gap-3">
@@ -127,9 +125,8 @@ export function Navbar() {
 
         <div
           ref={menuRef}
-          className={`md:hidden overflow-hidden transition-all duration-500 ${
-            menuOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
-          }`}
+          className={`md:hidden overflow-hidden transition-all duration-500 ${menuOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+            }`}
         >
           <div className="bg-[#242424] border-t border-white/10 px-6 py-8 mt-2 flex flex-col items-center text-white text-base mx-4 rounded-xl space-y-6">
             {navLinks.map(({ label, href }) => (
