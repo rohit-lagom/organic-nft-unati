@@ -57,7 +57,7 @@ export function Navbar() {
     if (!userInfo?.email && !address) {
       try {
         await connect();
-      } catch (err) {
+      } catch (_) {
         console.warn('User cancelled or connection failed');
         return; // ✅ Do nothing, stay on page
       }
