@@ -1,12 +1,23 @@
 'use client';
 
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { Menu } from 'lucide-react';
 import Sidebar from '@/components/dashboard/sidebar/sidebar';
-
+import { useWeb3AuthUser } from '@web3auth/modal/react';
+import { useAccount } from 'wagmi';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { userInfo } = useWeb3AuthUser();
+  const { address } = useAccount();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!userInfo?.email && !address) {
+      router.replace('/'); // ✅ Redirect to home
+    }
+  }, [userInfo, address, router]);
 
   return (
     <div className="flex min-h-screen bg-[#242424] text-white">
@@ -20,7 +31,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             onClick={() => setSidebarOpen(true)}
             className="p-2 rounded-md  cursor-pointer border border-white/20 hover:bg-white/10"
           >
-            <Menu className="w-6 h-6 " />
+            <Menu className="w-6 h-6" />
           </button>
         </div>
 

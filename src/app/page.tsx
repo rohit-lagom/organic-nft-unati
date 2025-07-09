@@ -15,7 +15,7 @@ export default function Home() {
 
   return (
     <main>
-     <Navbar onCreateClick={connect} />
+     <Navbar  />
       <Hero onCreateClick={connect} />
       <App/>
       <Code />
