@@ -144,7 +144,7 @@ const chainIdHex = await (provider as ExternalProvider)?.request?.({ method: 'et
         {/* Network */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-white text-sm mb-2">Current Network</h4>
-          <p className="text-white text-xl font-semibold">{networkName}</p>
+          <p className="text-white text-xl font-semibold">Lagom Mainnet</p>
         </div>
 
         {/* Login Time */}
