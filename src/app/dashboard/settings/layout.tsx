@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useWeb3AuthUser } from '@web3auth/modal/react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/navigation';
@@ -12,7 +12,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!userInfo?.email && !address) {
-      router.replace('/'); // ✅ Redirect to home
+      router.replace('/'); 
     }
   }, [userInfo, address, router]);
 
