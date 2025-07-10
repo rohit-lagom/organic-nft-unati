@@ -18,7 +18,7 @@ const navLinks = [
 
 export function Navbar() {
   const { connect, loading } = useWeb3AuthConnect();
-  const { disconnect } = useWeb3AuthDisconnect();
+  // const { disconnect } = useWeb3AuthDisconnect();
   const { address, isConnected } = useAccount();
   const router = useRouter();
 
