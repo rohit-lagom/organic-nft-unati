@@ -48,7 +48,7 @@ export default function DashboardPage() {
       } else if (connector) {
         try {
           const provider = await connector.getProvider();
-const ethersProvider = new Web3Provider(provider as ExternalProvider);
+          const ethersProvider = new Web3Provider(provider as ExternalProvider);
           const signer = ethersProvider.getSigner();
           const web3AuthAddress = await signer.getAddress();
           setWalletAddress(web3AuthAddress);

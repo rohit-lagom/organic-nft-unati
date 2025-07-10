@@ -41,6 +41,18 @@ export function Navbar() {
     if (storedName) setUserName(storedName);
   }, []);
 
+  // Auto-sync wallet address & user name when connected
+  useEffect(() => {
+    if (isConnected && address) {
+      setWalletAddress(address);
+      sessionStorage.setItem('wallet_address', address);
+    }
+    if (userInfo?.name) {
+      setUserName(userInfo.name);
+      sessionStorage.setItem('user_name', userInfo.name);
+    }
+  }, [isConnected, address, userInfo]);
+
   // Close dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -70,13 +82,6 @@ export function Navbar() {
   const handleConnect = async () => {
     try {
       await connect();
-
-      // Save to sessionStorage after successful login
-      if (address) sessionStorage.setItem('wallet_address', address);
-      if (userInfo?.name) sessionStorage.setItem('user_name', userInfo.name);
-
-      setWalletAddress(address || '');
-      setUserName(userInfo?.name || '');
 
       if (!sessionStorage.getItem('welcome_shown')) {
         setShowWelcome(true);
@@ -122,7 +127,17 @@ export function Navbar() {
             {navLinks.map(({ label, href }) => (
               <button
                 key={label}
-                onClick={() => router.push(href)}
+                onClick={async () => {
+                  if (label === 'Dashboard') {
+                    if (isConnected && walletAddress) {
+                      router.push('/dashboard');
+                    } else {
+                      await handleConnect();
+                    }
+                  } else {
+                    router.push(href);
+                  }
+                }}
                 className="hover:text-purple-400 cursor-pointer transition"
               >
                 {label}
@@ -160,8 +175,16 @@ export function Navbar() {
             {navLinks.map(({ label, href }) => (
               <button
                 key={label}
-                onClick={() => {
-                  router.push(href);
+                onClick={async () => {
+                  if (label === 'Dashboard') {
+                    if (isConnected && walletAddress) {
+                      router.push('/dashboard');
+                    } else {
+                      await handleConnect();
+                    }
+                  } else {
+                    router.push(href);
+                  }
                   setMenuOpen(false);
                 }}
                 className="block w-full text-left hover:text-purple-400 transition"
