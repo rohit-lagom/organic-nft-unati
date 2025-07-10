@@ -1,7 +1,6 @@
 'use client';
 
 import { ExternalProvider } from '@ethersproject/providers';
-
 import { useWeb3AuthUser } from '@web3auth/modal/react';
 import { useAccount, useBalance } from 'wagmi';
 import Image from 'next/image';
@@ -17,51 +16,45 @@ interface AuthUserInfo {
 
 export default function DashboardPage() {
   const { userInfo: web3User } = useWeb3AuthUser();
-  const { address: liveAddress, connector } = useAccount();
-  const { data: balanceData } = useBalance({ address: liveAddress });
+  const { address, connector } = useAccount();
+  const { data: balanceData } = useBalance({ address });
 
   const [userInfo, setUserInfo] = useState<Partial<AuthUserInfo> | null>(null);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [masked, setMasked] = useState(true);
   const [networkName, setNetworkName] = useState<string>('Loading...');
   const [copied, setCopied] = useState(false);
-  const [loginTime, setLoginTime] = useState({ utc: '', local: '' });
 
-  // Handle userInfo from Web3Auth or localStorage
+  // Load User Info
   useEffect(() => {
-    if (web3User?.email) {
+    if (web3User) {
       localStorage.setItem('organic-user', JSON.stringify(web3User));
       setUserInfo(web3User);
     } else {
       const cached = localStorage.getItem('organic-user');
       if (cached) {
-        try {
-          setUserInfo(JSON.parse(cached));
-        } catch {
-          localStorage.removeItem('organic-user');
-        }
+        setUserInfo(JSON.parse(cached));
       }
     }
   }, [web3User]);
 
-  // Handle wallet address from Wagmi or localStorage
+  // Load Wallet Address
   useEffect(() => {
-    if (liveAddress) {
-      localStorage.setItem('organic-wallet', liveAddress);
-      setWalletAddress(liveAddress);
+    if (address) {
+      localStorage.setItem('organic-wallet', address);
+      setWalletAddress(address);
     } else {
-      const cachedAddress = localStorage.getItem('organic-wallet');
-      if (cachedAddress) {
-        setWalletAddress(cachedAddress);
-      }
+      const cached = localStorage.getItem('organic-wallet');
+      if (cached) setWalletAddress(cached);
     }
-  }, [liveAddress]);
+  }, [address]);
 
-  // Fetch chain/network name & login time
+  // Fetch Network Name
   useEffect(() => {
     const fetchNetwork = async () => {
       try {
         const provider = await connector?.getProvider();
-const chainIdHex = await (provider as ExternalProvider)?.request?.({ method: 'eth_chainId' });
+        const chainIdHex = await (provider as ExternalProvider)?.request?.({ method: 'eth_chainId' });
         const chainId = parseInt(chainIdHex, 16);
         const networks: Record<number, string> = {
           1: 'Lagom Mainnet',
@@ -74,14 +67,7 @@ const chainIdHex = await (provider as ExternalProvider)?.request?.({ method: 'et
         setNetworkName('Unknown');
       }
     };
-
     fetchNetwork();
-
-    const now = new Date();
-    setLoginTime({
-      utc: now.toUTCString(),
-      local: now.toLocaleString(),
-    });
   }, [connector]);
 
   const handleCopy = async () => {
@@ -92,6 +78,11 @@ const chainIdHex = await (provider as ExternalProvider)?.request?.({ method: 'et
     }
   };
 
+  const toggleMask = () => setMasked(!masked);
+
+  const maskedAddress =
+    walletAddress && masked ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : walletAddress;
+
   const imageSrc = userInfo?.profileImage || '/Avatar.jpg';
 
   return (
@@ -99,13 +90,7 @@ const chainIdHex = await (provider as ExternalProvider)?.request?.({ method: 'et
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Image
-            src={imageSrc}
-            alt="User Avatar"
-            width={56}
-            height={56}
-            className="rounded-full border border-white/10"
-          />
+          <Image src={imageSrc} alt="User Avatar" width={56} height={56} className="rounded-full border border-white/10" />
           <div>
             <h2 className="text-lg font-semibold text-white">
               Welcome, {userInfo?.name || 'Anonymous'}
@@ -116,20 +101,27 @@ const chainIdHex = await (provider as ExternalProvider)?.request?.({ method: 'et
         <LogoutButton />
       </div>
 
-
       {/* Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Wallet Address */}
+        {/* Wallet */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-white text-sm mb-2">Wallet Address</h4>
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-sm text-gray-300 break-all">{walletAddress || 'Not connected'}</p>
-            <button
-              onClick={handleCopy}
-              className="text-xs px-3 cursor-pointer py-1 rounded-md border border-white/20 text-white hover:bg-white/10 transition"
-            >
-              {copied ? 'Copied!' : 'Copy'}
-            </button>
+          <div className="flex flex-col gap-2">
+            <p className="text-sm text-gray-300 break-all">{maskedAddress || 'Not connected'}</p>
+            <div className="flex gap-2">
+              <button
+                onClick={toggleMask}
+                className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10 transition"
+              >
+                {masked ? 'Show' : 'Hide'}
+              </button>
+              <button
+                onClick={handleCopy}
+                className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10 transition"
+              >
+                {copied ? 'Copied!' : 'Copy'}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -144,11 +136,8 @@ const chainIdHex = await (provider as ExternalProvider)?.request?.({ method: 'et
         {/* Network */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-white text-sm mb-2">Current Network</h4>
-          <p className="text-white text-xl font-semibold">Lagom Mainnet</p>
+          <p className="text-white text-xl font-semibold">{networkName}</p>
         </div>
-
-        {/* Login Time */}
-
       </div>
     </div>
   );
