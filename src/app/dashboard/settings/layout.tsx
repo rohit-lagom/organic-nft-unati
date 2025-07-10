@@ -1,14 +1,11 @@
 'use client';
 
 import { ReactNode, useEffect, useState } from 'react';
-import { Menu } from 'lucide-react';
-import Sidebar from '@/components/dashboard/sidebar/sidebar';
 import { useWeb3AuthUser } from '@web3auth/modal/react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/navigation';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { userInfo } = useWeb3AuthUser();
   const { address } = useAccount();
   const router = useRouter();
