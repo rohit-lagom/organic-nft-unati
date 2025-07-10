@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useWeb3AuthConnect, useWeb3AuthDisconnect } from '@web3auth/modal/react';
+import { useWeb3AuthConnect } from '@web3auth/modal/react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/common/button/button';
@@ -18,7 +18,6 @@ const navLinks = [
 
 export function Navbar() {
   const { connect, loading } = useWeb3AuthConnect();
-  // const { disconnect } = useWeb3AuthDisconnect();
   const { address, isConnected } = useAccount();
   const router = useRouter();
 
@@ -26,7 +25,6 @@ export function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Auto-close dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -66,7 +64,6 @@ export function Navbar() {
             </button>
           ))}
 
-          {/* Wallet Button */}
           {isConnected && address ? (
             <div className="relative" ref={dropdownRef}>
               <Button onClick={() => setDropdownOpen((prev) => !prev)}>
@@ -93,7 +90,6 @@ export function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden bg-[#242424] border-t border-white/10 p-6 space-y-4 text-white text-base">
           {navLinks.map(({ label, href }) => (
