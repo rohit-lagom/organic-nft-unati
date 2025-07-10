@@ -1,3 +1,5 @@
+// Navbar.tsx
+
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -10,6 +12,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Logo from '@/assets/images/Logo.png';
 import LogoutButton from '@/components/common/button/logout-button';
+import { generateRandomUsername } from '@/utils/username';
 
 const navLinks = [
   { label: 'Dashboard', href: '/dashboard' },
@@ -46,16 +49,17 @@ export function Navbar() {
     if (isConnected && address) {
       setWalletAddress(address);
       sessionStorage.setItem('wallet_address', address);
+      if (!sessionStorage.getItem('user_name')) {
+        const randomUsername = generateRandomUsername();
+        setUserName(randomUsername);
+        sessionStorage.setItem('user_name', randomUsername);
+      }
       if (redirectAfterConnect) {
         router.push('/dashboard');
         setRedirectAfterConnect(false);
       }
     }
-    if (userInfo?.name) {
-      setUserName(userInfo.name);
-      sessionStorage.setItem('user_name', userInfo.name);
-    }
-  }, [isConnected, address, userInfo, redirectAfterConnect, router]);
+  }, [isConnected, address, redirectAfterConnect, router]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -118,7 +122,6 @@ export function Navbar() {
 
   return (
     <>
-      {/* ✅ Account Created Popup */}
       {showAccountCreated && (
         <div className="fixed top-5 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-md shadow-lg z-[999] transition">
           Account created successfully!

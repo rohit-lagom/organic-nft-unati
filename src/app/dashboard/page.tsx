@@ -13,6 +13,7 @@ interface AuthUserInfo {
   name?: string;
   email?: string;
   profileImage?: string;
+  username?: string;
 }
 
 export default function DashboardPage() {
@@ -26,20 +27,18 @@ export default function DashboardPage() {
   const [networkName, setNetworkName] = useState<string>('Loading...');
   const [copied, setCopied] = useState(false);
 
-  // Load User Info
+  // Load User Info (including username)
   useEffect(() => {
-    if (web3User) {
+    const cached = localStorage.getItem('organic-user');
+    if (cached) {
+      setUserInfo(JSON.parse(cached));
+    } else if (web3User) {
       localStorage.setItem('organic-user', JSON.stringify(web3User));
       setUserInfo(web3User);
-    } else {
-      const cached = localStorage.getItem('organic-user');
-      if (cached) {
-        setUserInfo(JSON.parse(cached));
-      }
     }
   }, [web3User]);
 
-  // ✅ Load Wallet Address (wagmi + Web3Auth fallback)
+  // Load Wallet Address
   useEffect(() => {
     const loadWallet = async () => {
       if (address) {
@@ -94,10 +93,8 @@ export default function DashboardPage() {
   };
 
   const toggleMask = () => setMasked(!masked);
-
   const maskedAddress =
     walletAddress && masked ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : walletAddress;
-
   const imageSrc = userInfo?.profileImage || '/Avatar.jpg';
 
   return (
@@ -110,6 +107,7 @@ export default function DashboardPage() {
             <h2 className="text-lg font-semibold text-white">
               Welcome, {userInfo?.name || 'Anonymous'}
             </h2>
+            <p className="text-gray-400 text-sm">@{userInfo?.username || 'username'}</p>
             <p className="text-gray-400 text-sm">{userInfo?.email || 'No email'}</p>
           </div>
         </div>
@@ -124,16 +122,10 @@ export default function DashboardPage() {
           <div className="flex flex-col gap-2">
             <p className="text-sm text-gray-300 break-all">{maskedAddress || 'Not connected'}</p>
             <div className="flex gap-2">
-              <button
-                onClick={toggleMask}
-                className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10 transition"
-              >
+              <button onClick={toggleMask} className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10 transition">
                 {masked ? 'Show' : 'Hide'}
               </button>
-              <button
-                onClick={handleCopy}
-                className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10 transition"
-              >
+              <button onClick={handleCopy} className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10 transition">
                 {copied ? 'Copied!' : 'Copy'}
               </button>
             </div>

@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { formatEther } from 'viem';
 import LogoutButton from '@/components/common/button/logout-button';
 import { Web3Provider } from '@ethersproject/providers';
+import { generateRandomUsername } from '@/utils/username'; // ✅ Your existing username util
 
 interface AuthUserInfo {
   name?: string;
@@ -16,7 +17,7 @@ interface AuthUserInfo {
   username?: string;
 }
 
-export default function EditableSettingsPage() {
+export default function SettingsPage() {
   const { userInfo: web3User } = useWeb3AuthUser();
   const { address, connector } = useAccount();
   const { data: balanceData } = useBalance({ address });
@@ -28,21 +29,20 @@ export default function EditableSettingsPage() {
   const [copied, setCopied] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  // Load User Info
+  // Load user info & assign random username if missing
   useEffect(() => {
     if (web3User) {
-      const updatedUser = { ...web3User, username: '' };
+      const updatedUser = { ...web3User };
+   
       localStorage.setItem('organic-user', JSON.stringify(updatedUser));
       setUserInfo(updatedUser);
     } else {
       const cached = localStorage.getItem('organic-user');
-      if (cached) {
-        setUserInfo(JSON.parse(cached));
-      }
+      if (cached) setUserInfo(JSON.parse(cached));
     }
   }, [web3User]);
 
-  // Load Wallet Address
+  // Load wallet address
   useEffect(() => {
     const loadWallet = async () => {
       if (address) {
@@ -53,21 +53,19 @@ export default function EditableSettingsPage() {
           const provider = await connector.getProvider();
           const ethersProvider = new Web3Provider(provider as ExternalProvider);
           const signer = ethersProvider.getSigner();
-          const web3AuthAddress = await signer.getAddress();
-          setWalletAddress(web3AuthAddress);
-          localStorage.setItem('organic-wallet', web3AuthAddress);
-        } catch (err) {
-          console.error('Failed to fetch Web3Auth wallet address', err);
+          const fetchedAddress = await signer.getAddress();
+          localStorage.setItem('organic-wallet', fetchedAddress);
+          setWalletAddress(fetchedAddress);
+        } catch {
+          const cached = localStorage.getItem('organic-wallet');
+          if (cached) setWalletAddress(cached);
         }
-      } else {
-        const cached = localStorage.getItem('organic-wallet');
-        if (cached) setWalletAddress(cached);
       }
     };
     loadWallet();
   }, [address, connector]);
 
-  // Fetch Network Name
+  // Load network
   useEffect(() => {
     const fetchNetwork = async () => {
       try {
@@ -97,9 +95,7 @@ export default function EditableSettingsPage() {
   };
 
   const toggleMask = () => setMasked(!masked);
-
-  const maskedAddress =
-    walletAddress && masked ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : walletAddress;
+  const maskedAddress = walletAddress ? (masked ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : walletAddress) : '';
 
   const handleChange = (field: keyof AuthUserInfo, value: string) => {
     const updated = { ...userInfo, [field]: value };
@@ -107,39 +103,35 @@ export default function EditableSettingsPage() {
     localStorage.setItem('organic-user', JSON.stringify(updated));
   };
 
-  const imageSrc = userInfo?.profileImage || '/Avatar.jpg';
+  const imageSrc = userInfo?.profileImage?.trim() ? userInfo.profileImage : '/Avatar.jpg';
 
   return (
     <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Image src={imageSrc} alt="User Avatar" width={56} height={56} className="rounded-full border border-white/10" />
+          <Image src={imageSrc} alt="Avatar" width={56} height={56} className="rounded-full border border-white/10" />
           <h2 className="text-white text-lg font-semibold">Settings</h2>
         </div>
         <div className="flex gap-2">
-          <button
-            onClick={() => setIsEditing(!isEditing)}
-            className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10 transition"
-          >
+          <button onClick={() => setIsEditing(!isEditing)} className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10">
             {isEditing ? 'Done' : 'Edit'}
           </button>
           <LogoutButton />
         </div>
       </div>
 
-      {/* Separate Boxes */}
+      {/* User Info */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Name */}
-        <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow space-y-2">
+        <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-gray-400 text-xs mb-1">Name</h4>
           {isEditing ? (
             <input
               type="text"
               value={userInfo?.name || ''}
               onChange={(e) => handleChange('name', e.target.value)}
-              placeholder="Name"
-              className="bg-transparent border-b border-white/20 text-white text-lg font-semibold focus:outline-none placeholder-gray-500"
+              className="bg-transparent border-b border-white/20 text-white text-lg font-semibold focus:outline-none"
             />
           ) : (
             <p className="text-white text-lg font-semibold">{userInfo?.name || 'Anonymous'}</p>
@@ -147,15 +139,14 @@ export default function EditableSettingsPage() {
         </div>
 
         {/* Username */}
-        <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow space-y-2">
+        <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-gray-400 text-xs mb-1">Username</h4>
           {isEditing ? (
             <input
               type="text"
               value={userInfo?.username || ''}
               onChange={(e) => handleChange('username', e.target.value)}
-              placeholder="Username"
-              className="bg-transparent border-b border-white/20 text-white text-lg font-semibold focus:outline-none placeholder-gray-500"
+              className="bg-transparent border-b border-white/20 text-white text-lg font-semibold focus:outline-none"
             />
           ) : (
             <p className="text-white text-lg font-semibold">@{userInfo?.username || 'username'}</p>
@@ -163,55 +154,42 @@ export default function EditableSettingsPage() {
         </div>
 
         {/* Email */}
-        <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow space-y-2">
+        <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-gray-400 text-xs mb-1">Email</h4>
           <p className="text-white text-lg">{userInfo?.email || 'No email'}</p>
         </div>
 
         {/* Profile Image */}
-        <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow space-y-2">
+        <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-gray-400 text-xs mb-1">Profile Image URL</h4>
           {isEditing ? (
             <input
               type="url"
               value={userInfo?.profileImage || ''}
               onChange={(e) => handleChange('profileImage', e.target.value)}
-              placeholder="Profile Image URL"
-              className="bg-transparent border-b border-white/20 text-white text-lg font-semibold focus:outline-none placeholder-gray-500"
+              className="bg-transparent border-b border-white/20 text-white text-lg font-semibold focus:outline-none"
             />
           ) : (
             <div className="flex items-center gap-3">
-              <Image
-                src={imageSrc}
-                alt="Profile Preview"
-                width={40}
-                height={40}
-                className="rounded-full border border-white/10"
-              />
+              <Image src={imageSrc} alt="Profile" width={40} height={40} className="rounded-full border border-white/10" />
               <span className="text-white text-sm truncate">{userInfo?.profileImage || 'Not Set'}</span>
             </div>
           )}
         </div>
       </div>
 
-      {/* Wallet & Network Info */}
+      {/* Wallet Info */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Wallet */}
+        {/* Wallet Address */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-white text-sm mb-2">Wallet Address</h4>
           <div className="flex flex-col gap-2">
             <p className="text-sm text-gray-300 break-all">{maskedAddress || 'Not connected'}</p>
             <div className="flex gap-2">
-              <button
-                onClick={toggleMask}
-                className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10 transition"
-              >
+              <button onClick={toggleMask} className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10">
                 {masked ? 'Show' : 'Hide'}
               </button>
-              <button
-                onClick={handleCopy}
-                className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10 transition"
-              >
+              <button onClick={handleCopy} className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10">
                 {copied ? 'Copied!' : 'Copy'}
               </button>
             </div>
