@@ -30,10 +30,11 @@ export function Navbar() {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
   const [userName, setUserName] = useState('');
+  const [redirectAfterConnect, setRedirectAfterConnect] = useState(false);
+  const [showAccountCreated, setShowAccountCreated] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  // Load wallet address and user name from sessionStorage (for session persistence)
   useEffect(() => {
     const storedAddress = sessionStorage.getItem('wallet_address');
     const storedName = sessionStorage.getItem('user_name');
@@ -41,19 +42,21 @@ export function Navbar() {
     if (storedName) setUserName(storedName);
   }, []);
 
-  // Auto-sync wallet address & user name when connected
   useEffect(() => {
     if (isConnected && address) {
       setWalletAddress(address);
       sessionStorage.setItem('wallet_address', address);
+      if (redirectAfterConnect) {
+        router.push('/dashboard');
+        setRedirectAfterConnect(false);
+      }
     }
     if (userInfo?.name) {
       setUserName(userInfo.name);
       sessionStorage.setItem('user_name', userInfo.name);
     }
-  }, [isConnected, address, userInfo]);
+  }, [isConnected, address, userInfo, redirectAfterConnect, router]);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -64,7 +67,6 @@ export function Navbar() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  // Auto close modal on outside click with redirect protection
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (
@@ -82,10 +84,11 @@ export function Navbar() {
   const handleConnect = async () => {
     try {
       await connect();
-
       if (!sessionStorage.getItem('welcome_shown')) {
         setShowWelcome(true);
         sessionStorage.setItem('welcome_shown', 'true');
+        setShowAccountCreated(true);
+        setTimeout(() => setShowAccountCreated(false), 3000);
       }
     } catch (err) {
       console.error('Connection failed:', err);
@@ -115,7 +118,13 @@ export function Navbar() {
 
   return (
     <>
-      {/* Navbar */}
+      {/* ✅ Account Created Popup */}
+      {showAccountCreated && (
+        <div className="fixed top-5 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-md shadow-lg z-[999] transition">
+          Account created successfully!
+        </div>
+      )}
+
       <header className="fixed top-0 left-0 right-0 z-50 bg-[#242424] backdrop-blur-lg border-b border-white/10 shadow-md">
         <div className="flex items-center justify-between px-6 md:px-8 py-4">
           <Link href="/" className="flex items-center gap-3">
@@ -132,6 +141,7 @@ export function Navbar() {
                     if (isConnected && walletAddress) {
                       router.push('/dashboard');
                     } else {
+                      setRedirectAfterConnect(true);
                       await handleConnect();
                     }
                   } else {
@@ -180,6 +190,7 @@ export function Navbar() {
                     if (isConnected && walletAddress) {
                       router.push('/dashboard');
                     } else {
+                      setRedirectAfterConnect(true);
                       await handleConnect();
                     }
                   } else {
@@ -194,15 +205,9 @@ export function Navbar() {
             ))}
 
             {isConnected && walletAddress ? (
-              <div className="relative">
-                <Button fullWidth onClick={() => setDropdownOpen((prev) => !prev)}>
-                  {maskedAddress}
-                </Button>
-                {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 bg-[#2a2a2a] border border-white/10 rounded-md shadow-lg">
-                    <LogoutButton />
-                  </div>
-                )}
+              <div className="space-y-2">
+                <Button fullWidth>{maskedAddress}</Button>
+                <LogoutButton />
               </div>
             ) : (
               <Button
@@ -220,7 +225,6 @@ export function Navbar() {
         )}
       </header>
 
-      {/* Welcome Modal */}
       {showWelcome && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-[999]">
           <div
@@ -234,7 +238,6 @@ export function Navbar() {
               You have successfully logged in via Web3Auth.
             </p>
 
-            {/* Wallet Address Section */}
             <div className="bg-[#2a2a2a] p-3 rounded-md border border-white/10 text-white text-sm break-all">
               <p className="mb-2">This is your wallet address:</p>
               <p className="font-mono">
@@ -256,7 +259,6 @@ export function Navbar() {
               </div>
             </div>
 
-            {/* Go to Dashboard Button */}
             <Button
               onClick={handleGoToDashboard}
               className="mt-4 w-full"
