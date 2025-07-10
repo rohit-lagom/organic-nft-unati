@@ -108,7 +108,7 @@ export function Navbar() {
               className="md:w-auto"
               disabled={loading}
             >
-              {loading ? 'Connecting...' : '+ Login / Signup'}
+              {loading ? 'Connecting...' : ' Connect Wallet'}
             </Button>
           </nav>
 
