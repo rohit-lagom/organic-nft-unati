@@ -21,7 +21,6 @@ const navLinks = [
 
 export function Navbar() {
   const { connect, loading } = useWeb3AuthConnect();
-  const { userInfo } = useWeb3AuthUser();
   const { address, isConnected } = useAccount();
   const router = useRouter();
 

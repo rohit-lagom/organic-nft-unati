@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 import { formatEther } from 'viem';
 import LogoutButton from '@/components/common/button/logout-button';
 import { Web3Provider } from '@ethersproject/providers';
-import { generateRandomUsername } from '@/utils/username'; // ✅ Your existing username util
 
 interface AuthUserInfo {
   name?: string;
