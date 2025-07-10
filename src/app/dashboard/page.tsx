@@ -64,7 +64,7 @@ export default function DashboardPage() {
 const chainIdHex = await (provider as ExternalProvider)?.request?.({ method: 'eth_chainId' });
         const chainId = parseInt(chainIdHex, 16);
         const networks: Record<number, string> = {
-          1: 'Ethereum Mainnet',
+          1: 'Lagom Mainnet',
           5: 'Goerli Testnet',
           137: 'Polygon',
           80001: 'Mumbai Testnet',
@@ -115,11 +115,6 @@ const chainIdHex = await (provider as ExternalProvider)?.request?.({ method: 'et
         </div>
         <LogoutButton />
       </div>
-                  <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow col-span-1 md:col-span-3">
-          <h4 className="text-white text-sm mb-2">Login Time</h4>
-          <p className="text-white text-sm">UTC: {loginTime.utc}</p>
-          <p className="text-white text-sm">Local: {loginTime.local}</p>
-        </div>
 
 
       {/* Overview */}
@@ -142,13 +137,13 @@ const chainIdHex = await (provider as ExternalProvider)?.request?.({ method: 'et
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-white text-sm mb-2">Balance</h4>
           <p className="text-white text-xl font-semibold">
-            {balanceData ? `${formatEther(balanceData.value)} ${balanceData.symbol}` : 'Loading...'}
+            {balanceData ? `${formatEther(balanceData.value)} LGM` : 'Loading...'}
           </p>
         </div>
 
         {/* Network */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
-          <h4 className="text-white text-sm mb-2">Network</h4>
+          <h4 className="text-white text-sm mb-2">Current Network</h4>
           <p className="text-white text-xl font-semibold">{networkName}</p>
         </div>
 
