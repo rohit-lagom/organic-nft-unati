@@ -17,9 +17,7 @@ interface NavLink {
 
 const navLinks: NavLink[] = [
   { label: 'Dashboard', href: '/dashboard' },
-  { label: 'Pricing', href: '#' },
   { label: 'Product', href: '#' },
-  { label: 'Resources', href: '#' },
 ];
 
 export function Navbar() {
@@ -110,7 +108,7 @@ export function Navbar() {
               className="md:w-auto"
               disabled={loading}
             >
-              {loading ? 'Connecting...' : '+ Create now'}
+              {loading ? 'Connecting...' : '+ Login / Signup'}
             </Button>
           </nav>
 
