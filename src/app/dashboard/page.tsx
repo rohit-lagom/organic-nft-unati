@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { formatEther } from 'viem';
 import LogoutButton from '@/components/common/button/logout-button';
+import { Web3Provider } from '@ethersproject/providers';
 
 interface AuthUserInfo {
   name?: string;
@@ -38,16 +39,30 @@ export default function DashboardPage() {
     }
   }, [web3User]);
 
-  // Load Wallet Address
+  // ✅ Load Wallet Address (wagmi + Web3Auth fallback)
   useEffect(() => {
-    if (address) {
-      localStorage.setItem('organic-wallet', address);
-      setWalletAddress(address);
-    } else {
-      const cached = localStorage.getItem('organic-wallet');
-      if (cached) setWalletAddress(cached);
-    }
-  }, [address]);
+    const loadWallet = async () => {
+      if (address) {
+        localStorage.setItem('organic-wallet', address);
+        setWalletAddress(address);
+      } else if (connector) {
+        try {
+          const provider = await connector.getProvider();
+const ethersProvider = new Web3Provider(provider as ExternalProvider);
+          const signer = ethersProvider.getSigner();
+          const web3AuthAddress = await signer.getAddress();
+          setWalletAddress(web3AuthAddress);
+          localStorage.setItem('organic-wallet', web3AuthAddress);
+        } catch (err) {
+          console.error('Failed to fetch Web3Auth wallet address', err);
+        }
+      } else {
+        const cached = localStorage.getItem('organic-wallet');
+        if (cached) setWalletAddress(cached);
+      }
+    };
+    loadWallet();
+  }, [address, connector]);
 
   // Fetch Network Name
   useEffect(() => {
@@ -129,7 +144,7 @@ export default function DashboardPage() {
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-white text-sm mb-2">Balance</h4>
           <p className="text-white text-xl font-semibold">
-            {balanceData ? `${formatEther(balanceData.value)} LGM` : 'Loading...'}
+            {balanceData ? `${formatEther(balanceData.value)} LAGO` : 'Loading...'}
           </p>
         </div>
 
