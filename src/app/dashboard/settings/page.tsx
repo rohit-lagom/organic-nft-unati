@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { formatEther } from 'viem';
 import LogoutButton from '@/components/common/button/logout-button';
 import { Web3Provider } from '@ethersproject/providers';
+import { useRouter } from 'next/navigation'; // ✅ Import router
 
 interface AuthUserInfo {
   name?: string;
@@ -17,6 +18,8 @@ interface AuthUserInfo {
 }
 
 export default function SettingsPage() {
+  const router = useRouter(); // ✅ Initialize router
+
   const { userInfo: web3User } = useWeb3AuthUser();
   const { address, connector } = useAccount();
   const { data: balanceData } = useBalance({ address });
@@ -28,11 +31,9 @@ export default function SettingsPage() {
   const [copied, setCopied] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  // Load user info & assign random username if missing
   useEffect(() => {
     if (web3User) {
       const updatedUser = { ...web3User };
-   
       localStorage.setItem('organic-user', JSON.stringify(updatedUser));
       setUserInfo(updatedUser);
     } else {
@@ -41,7 +42,6 @@ export default function SettingsPage() {
     }
   }, [web3User]);
 
-  // Load wallet address
   useEffect(() => {
     const loadWallet = async () => {
       if (address) {
@@ -64,7 +64,6 @@ export default function SettingsPage() {
     loadWallet();
   }, [address, connector]);
 
-  // Load network
   useEffect(() => {
     const fetchNetwork = async () => {
       try {
@@ -113,7 +112,17 @@ export default function SettingsPage() {
           <h2 className="text-white text-lg font-semibold">Settings</h2>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => setIsEditing(!isEditing)} className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10">
+          <button
+            onClick={() => {
+              if (isEditing) {
+                setIsEditing(false);
+                router.push('/dashboard'); // ✅ Redirect after Done
+              } else {
+                setIsEditing(true);
+              }
+            }}
+            className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10"
+          >
             {isEditing ? 'Done' : 'Edit'}
           </button>
           <LogoutButton />
@@ -122,7 +131,6 @@ export default function SettingsPage() {
 
       {/* User Info */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Name */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-gray-400 text-xs mb-1">Name</h4>
           {isEditing ? (
@@ -137,7 +145,6 @@ export default function SettingsPage() {
           )}
         </div>
 
-        {/* Username */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-gray-400 text-xs mb-1">Username</h4>
           {isEditing ? (
@@ -152,13 +159,11 @@ export default function SettingsPage() {
           )}
         </div>
 
-        {/* Email */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-gray-400 text-xs mb-1">Email</h4>
           <p className="text-white text-lg">{userInfo?.email || 'No email'}</p>
         </div>
 
-        {/* Profile Image */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-gray-400 text-xs mb-1">Profile Image URL</h4>
           {isEditing ? (
@@ -179,7 +184,6 @@ export default function SettingsPage() {
 
       {/* Wallet Info */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Wallet Address */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-white text-sm mb-2">Wallet Address</h4>
           <div className="flex flex-col gap-2">
@@ -195,7 +199,6 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Balance */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-white text-sm mb-2">Balance</h4>
           <p className="text-white text-xl font-semibold">
@@ -203,7 +206,6 @@ export default function SettingsPage() {
           </p>
         </div>
 
-        {/* Network */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-white text-sm mb-2">Current Network</h4>
           <p className="text-white text-xl font-semibold">{networkName}</p>
