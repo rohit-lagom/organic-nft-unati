@@ -1,34 +1,33 @@
 'use client';
 
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 import { useState, useEffect, MouseEvent } from 'react';
-import StackIcon from '@/assets/images/create/Stack.svg';
-import DualPhotoIcon from '@/assets/images/create/DualPhoto.svg';
-import SphereIcon from '@/assets/images/create/Sphere.svg';
+import ExploreIcon from '@/assets/images/create/ExploreIcon.png';
+import SearchIcon from '@/assets/images/create/SearchIcon.png';
+import AuditIcon from '@/assets/images/create/AuditIcon.png';
 import HeroBg from '@/assets/images/HeroBg.png';
 import Button from '@/components/common/button/button';
 
-
 interface Card {
   title: string;
-  icon: string;
+  icon: StaticImageData;
   hoverBg: string;
 }
 
 const cards: Card[] = [
   {
     title: 'Explore Certificates',
-    icon: StackIcon,
+    icon: ExploreIcon,
     hoverBg: 'from-green-500 to-emerald-600',
   },
   {
     title: 'Search Certificates',
-    icon: DualPhotoIcon,
+    icon: SearchIcon,
     hoverBg: 'from-blue-500 to-cyan-500',
   },
   {
     title: 'Audit-trail',
-    icon: SphereIcon,
+    icon: AuditIcon,
     hoverBg: 'from-purple-600 to-fuchsia-600',
   },
 ];
@@ -38,13 +37,17 @@ export default function PublicExplorerSection() {
   const [floatOffset, setFloatOffset] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    let animationId: number;
+    const animate = () => {
+      const time = Date.now() / 1000;
       setFloatOffset({
-        x: Math.sin(Date.now() / 1000) * 10,
-        y: Math.cos(Date.now() / 1000) * 10,
+        x: Math.sin(time) * 10,
+        y: Math.cos(time) * 10,
       });
-    }, 50);
-    return () => clearInterval(interval);
+      animationId = requestAnimationFrame(animate);
+    };
+    animationId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationId);
   }, []);
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
@@ -59,6 +62,7 @@ export default function PublicExplorerSection() {
       className="relative min-h-screen flex flex-col items-center justify-center bg-[#242424] text-white overflow-hidden px-4 sm:px-6 md:px-8 py-16 sm:py-24 lg:py-32"
       onMouseMove={handleMouseMove}
     >
+      {/* Background */}
       <Image
         src={HeroBg}
         alt="Hero Background"
@@ -75,7 +79,7 @@ export default function PublicExplorerSection() {
           transition: 'transform 0.2s ease-out',
         }}
       >
-        {[StackIcon, DualPhotoIcon, SphereIcon, StackIcon].map((icon, idx) => (
+        {[ExploreIcon, SearchIcon, AuditIcon, ExploreIcon].map((icon, idx) => (
           <div
             key={idx}
             className="m-6 md:m-8 p-6 border border-white/10 rounded-xl backdrop-blur-md bg-white/5"
@@ -119,7 +123,7 @@ export default function PublicExplorerSection() {
         {cards.map((card, index) => (
           <div
             key={index}
-            className={`group w-60 h-60 sm:w-64 sm:h-64 md:w-72 md:h-72 rounded-2xl border border-white/10 flex flex-col items-center justify-center text-center transition-all duration-500 ease-in-out cursor-pointer relative overflow-hidden`}
+            className="group w-60 h-60 sm:w-64 sm:h-64 md:w-72 md:h-72 rounded-2xl border border-white/10 flex flex-col items-center justify-center text-center transition-all duration-500 ease-in-out cursor-pointer relative overflow-hidden"
           >
             <div
               className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${card.hoverBg}
@@ -137,8 +141,8 @@ export default function PublicExplorerSection() {
             </div>
 
             <div
-              className={`absolute bottom-6 left-0 right-0 text-center text-white flex flex-col items-center gap-1
-                md:opacity-0 md:group-hover:opacity-100 opacity-100 transition-opacity duration-500 z-10`}
+              className="absolute bottom-6 left-0 right-0 text-center text-white flex flex-col items-center gap-1
+                md:opacity-0 md:group-hover:opacity-100 opacity-100 transition-opacity duration-500 z-10"
             >
               <span className="font-semibold">{card.title}</span>
               <span className="text-3xl leading-none">→</span>
