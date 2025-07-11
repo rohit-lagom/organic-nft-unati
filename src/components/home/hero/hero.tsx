@@ -29,9 +29,9 @@ const leftImages = [left1, left2, left3, left4, left5, left6, left7];
 const rightImages = [right1, right2, right3, right4, right5, right6, right7];
 const mobileImages = [left2, left3, left4, left5, right2, right3, right4, right5, right6];
 const stats = [
-  { value: '+ $20 million', label: 'in creator earnings' },
-  { value: '+ 2 million', label: 'tokens generated' },
-  { value: '+ 21,000', label: 'happy creators' },
+  { value: '1000+ certified', label: 'organic farmers' },
+  { value: '15+ years ', label: 'issuing organic certificates' },
+  { value: '100% publicly', label: 'verifiable certificates' },
 ];
 
 export function Hero({ onCreateClick }: HeroProps) {
@@ -77,18 +77,18 @@ export function Hero({ onCreateClick }: HeroProps) {
           transition={{ duration: 1, delay: idx * 0.1 }}
           style={{ y }}
           className={`absolute hidden lg:block z-10 ${idx === 0
-              ? '-top-6 -left-15 md:w-32 md:h-20 lg:w-48 lg:h-36'
-              : idx === 1
-                ? 'top-18 -left-15 z-20 md:w-32 md:h-32 lg:w-56 lg:h-76'
-                : idx === 2
-                  ? 'top-12 left-20  md:w-32 md:h-24 lg:w-56 lg:h-64'
-                  : idx === 3
-                    ? 'top-88  -left-26 md:w-32 md:h-24 lg:w-56 lg:h-64'
-                    : idx === 4
-                      ? 'top-68 left-18 md:w-32 md:h-24 lg:w-56 lg:h-76'
-                      : idx === 5
-                        ? 'top-[33rem] -left-20 md:w-32 md:h-24 lg:w-56 lg:h-58'
-                        : 'top-[32rem] left-16 md:w-32 md:h-24 lg:w-48 lg:h-56'
+            ? '-top-6 -left-15 md:w-32 md:h-20 lg:w-48 lg:h-36'
+            : idx === 1
+              ? 'top-18 -left-15 z-20 md:w-32 md:h-32 lg:w-56 lg:h-76'
+              : idx === 2
+                ? 'top-12 left-20  md:w-32 md:h-24 lg:w-56 lg:h-64'
+                : idx === 3
+                  ? 'top-88  -left-26 md:w-32 md:h-24 lg:w-56 lg:h-64'
+                  : idx === 4
+                    ? 'top-68 left-18 md:w-32 md:h-24 lg:w-56 lg:h-76'
+                    : idx === 5
+                      ? 'top-[33rem] -left-20 md:w-32 md:h-24 lg:w-56 lg:h-58'
+                      : 'top-[32rem] left-16 md:w-32 md:h-24 lg:w-48 lg:h-56'
             }`}
         >
           <Image src={img} alt={`Left ${idx + 1}`} className="w-full h-full" />
@@ -123,14 +123,13 @@ export function Hero({ onCreateClick }: HeroProps) {
 
       <div className="text-center z-20 relative max-w-5xl mx-auto mt-24 md:mt-0">
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-extrabold leading-tight">
-          From <span className="text-purple-500">imagination</span>{" "}
+          Trust <span className="text-purple-500">Organic</span>{" "}
           <br className="hidden sm:block" />
-          to reality
+          <span className="text-purple-500">Verify</span>   On-Chain
         </h1>
 
         <p className="mt-6 sm:mt-8 text-lg sm:text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-          Empowering creators to transform ideas into generative art, drops,
-          and worlds with zero code.
+          Every organic certificate from Unati is now minted as an NFT — verifiable, immutable, and publicly accessible, bringing full transparency to every product.
         </p>
         <Button onClick={onCreateClick} className="mt-8 sm:mt-10 px-8 sm:px-10 py-3 sm:py-4 text-base sm:text-lg md:text-xl shadow-md cursor-pointer">
           + Create now
