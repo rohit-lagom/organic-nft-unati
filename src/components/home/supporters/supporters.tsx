@@ -19,7 +19,7 @@ const Supporters = () => {
     { src: murabba, alt: 'Organic Certifier D', url: '#' },
   ];
 
-  const scrollingLogos = [...supporterLogos, ...supporterLogos,...supporterLogos];
+  const scrollingLogos = [...supporterLogos,...supporterLogos];
 
   useEffect(() => {
     const container = containerRef.current;
