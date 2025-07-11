@@ -1,9 +1,7 @@
-// Navbar.tsx
-
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useWeb3AuthConnect } from '@web3auth/modal/react';
+import { useWeb3AuthConnect, useWeb3AuthUser } from '@web3auth/modal/react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/common/button/button';
@@ -12,7 +10,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Logo from '@/assets/images/Logo.png';
 import LogoutButton from '@/components/common/button/logout-button';
-import { generateRandomUsername } from '@/utils/username';
+import { useAuthStore } from '@/store/auth-store';
 
 const navLinks = [
   { label: 'Dashboard', href: '/dashboard' },
@@ -21,8 +19,10 @@ const navLinks = [
 
 export function Navbar() {
   const { connect, loading } = useWeb3AuthConnect();
+  const { userInfo: web3User } = useWeb3AuthUser();
   const { address, isConnected } = useAccount();
   const router = useRouter();
+  const { walletAddress, userName, setAuth } = useAuthStore();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -30,35 +30,20 @@ export function Navbar() {
   const [masked, setMasked] = useState(true);
   const [copied, setCopied] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
-  const [walletAddress, setWalletAddress] = useState('');
-  const [userName, setUserName] = useState('');
   const [redirectAfterConnect, setRedirectAfterConnect] = useState(false);
   const [showAccountCreated, setShowAccountCreated] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const storedAddress = sessionStorage.getItem('wallet_address');
-    const storedName = sessionStorage.getItem('user_name');
-    if (storedAddress) setWalletAddress(storedAddress);
-    if (storedName) setUserName(storedName);
-  }, []);
-
-  useEffect(() => {
     if (isConnected && address) {
-      setWalletAddress(address);
-      sessionStorage.setItem('wallet_address', address);
-      if (!sessionStorage.getItem('user_name')) {
-        const randomUsername = generateRandomUsername();
-        setUserName(randomUsername);
-        sessionStorage.setItem('user_name', randomUsername);
-      }
+      setAuth(address, web3User?.name, web3User?.email);
       if (redirectAfterConnect) {
         router.push('/dashboard');
         setRedirectAfterConnect(false);
       }
     }
-  }, [isConnected, address, redirectAfterConnect, router]);
+  }, [isConnected, address, web3User, redirectAfterConnect, router, setAuth]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -243,7 +228,7 @@ export function Navbar() {
             <div className="bg-[#2a2a2a] p-3 rounded-md border border-white/10 text-white text-sm break-all">
               <p className="mb-2">This is your wallet address:</p>
               <p className="font-mono">
-                {masked ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : walletAddress}
+                {masked ? `${walletAddress?.slice(0, 6)}...${walletAddress?.slice(-4)}` : walletAddress}
               </p>
               <div className="flex gap-2 mt-3">
                 <button

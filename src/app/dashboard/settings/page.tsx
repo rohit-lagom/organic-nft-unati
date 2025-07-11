@@ -7,10 +7,10 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { formatEther } from 'viem';
 import LogoutButton from '@/components/common/button/logout-button';
-import { Web3Provider } from '@ethersproject/providers';
-import { useRouter } from 'next/navigation'; // ✅ Import router
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/store/auth-store';
 
-interface AuthUserInfo {
+interface LocalUser {
   name?: string;
   email?: string;
   profileImage?: string;
@@ -18,51 +18,36 @@ interface AuthUserInfo {
 }
 
 export default function SettingsPage() {
-  const router = useRouter(); // ✅ Initialize router
-
+  const router = useRouter();
   const { userInfo: web3User } = useWeb3AuthUser();
-  const { address, connector } = useAccount();
+  const { address, connector, isConnected } = useAccount();
+  const {
+    walletAddress,
+    userName,
+    name,
+    email,
+    profileImage,
+    setAuth,
+  } = useAuthStore();
   const { data: balanceData } = useBalance({ address });
 
-  const [userInfo, setUserInfo] = useState<Partial<AuthUserInfo>>({});
-  const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [networkName, setNetworkName] = useState('Loading...');
   const [masked, setMasked] = useState(true);
   const [copied, setCopied] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [localUser, setLocalUser] = useState<LocalUser>({
+    name,
+    email,
+    profileImage,
+    username: userName,
+  });
 
   useEffect(() => {
-    if (web3User) {
-      const updatedUser = { ...web3User };
-      localStorage.setItem('organic-user', JSON.stringify(updatedUser));
-      setUserInfo(updatedUser);
-    } else {
-      const cached = localStorage.getItem('organic-user');
-      if (cached) setUserInfo(JSON.parse(cached));
+    if (isConnected && address) {
+      const username = (web3User as Record<string, unknown>)?.username as string | undefined;
+      setAuth(address, username, name, email, profileImage);
     }
-  }, [web3User]);
-
-  useEffect(() => {
-    const loadWallet = async () => {
-      if (address) {
-        localStorage.setItem('organic-wallet', address);
-        setWalletAddress(address);
-      } else if (connector) {
-        try {
-          const provider = await connector.getProvider();
-          const ethersProvider = new Web3Provider(provider as ExternalProvider);
-          const signer = ethersProvider.getSigner();
-          const fetchedAddress = await signer.getAddress();
-          localStorage.setItem('organic-wallet', fetchedAddress);
-          setWalletAddress(fetchedAddress);
-        } catch {
-          const cached = localStorage.getItem('organic-wallet');
-          if (cached) setWalletAddress(cached);
-        }
-      }
-    };
-    loadWallet();
-  }, [address, connector]);
+  }, [isConnected, address, web3User, setAuth, name, email, profileImage]);
 
   useEffect(() => {
     const fetchNetwork = async () => {
@@ -93,15 +78,29 @@ export default function SettingsPage() {
   };
 
   const toggleMask = () => setMasked(!masked);
-  const maskedAddress = walletAddress ? (masked ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : walletAddress) : '';
+  const maskedAddress = walletAddress
+    ? masked
+      ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
+      : walletAddress
+    : '';
 
-  const handleChange = (field: keyof AuthUserInfo, value: string) => {
-    const updated = { ...userInfo, [field]: value };
-    setUserInfo(updated);
-    localStorage.setItem('organic-user', JSON.stringify(updated));
+  const handleChange = (field: keyof LocalUser, value: string) => {
+    setLocalUser((prev) => ({ ...prev, [field]: value }));
   };
 
-  const imageSrc = userInfo?.profileImage?.trim() ? userInfo.profileImage : '/Avatar.jpg';
+  const handleSave = () => {
+    setAuth(
+      walletAddress ?? '',
+      localUser.username || userName,
+      localUser.name,
+      email,
+      localUser.profileImage
+    );
+    setIsEditing(false);
+    router.push('/dashboard'); // optional: you can remove this if you want to stay on Settings page after save
+  };
+
+  const imageSrc = localUser?.profileImage?.trim() ? localUser.profileImage : '/Avatar.jpg';
 
   return (
     <div className="space-y-8">
@@ -113,14 +112,7 @@ export default function SettingsPage() {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => {
-              if (isEditing) {
-                setIsEditing(false);
-                router.push('/dashboard'); // ✅ Redirect after Done
-              } else {
-                setIsEditing(true);
-              }
-            }}
+            onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
             className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10"
           >
             {isEditing ? 'Done' : 'Edit'}
@@ -131,52 +123,60 @@ export default function SettingsPage() {
 
       {/* User Info */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Name */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-gray-400 text-xs mb-1">Name</h4>
           {isEditing ? (
             <input
               type="text"
-              value={userInfo?.name || ''}
+              value={localUser.name || ''}
               onChange={(e) => handleChange('name', e.target.value)}
               className="bg-transparent border-b border-white/20 text-white text-lg font-semibold focus:outline-none"
             />
           ) : (
-            <p className="text-white text-lg font-semibold">{userInfo?.name || 'Anonymous'}</p>
+            <p className="text-white text-lg font-semibold">{localUser.name || 'Anonymous'}</p>
           )}
         </div>
 
+        {/* Username */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-gray-400 text-xs mb-1">Username</h4>
           {isEditing ? (
             <input
               type="text"
-              value={userInfo?.username || ''}
+              value={localUser.username || ''}
               onChange={(e) => handleChange('username', e.target.value)}
               className="bg-transparent border-b border-white/20 text-white text-lg font-semibold focus:outline-none"
             />
           ) : (
-            <p className="text-white text-lg font-semibold">@{userInfo?.username || 'username'}</p>
+            <p className="text-white text-lg font-semibold">@{localUser.username || userName}</p>
           )}
         </div>
 
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-gray-400 text-xs mb-1">Email</h4>
-          <p className="text-white text-lg">{userInfo?.email || 'No email'}</p>
+          <p className="text-white text-lg">
+            {email || 'No email'}
+          </p>
         </div>
 
+
+        {/* Profile Image */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-gray-400 text-xs mb-1">Profile Image URL</h4>
           {isEditing ? (
             <input
               type="url"
-              value={userInfo?.profileImage || ''}
+              value={localUser.profileImage || ''}
               onChange={(e) => handleChange('profileImage', e.target.value)}
               className="bg-transparent border-b border-white/20 text-white text-lg font-semibold focus:outline-none"
             />
           ) : (
             <div className="flex items-center gap-3">
               <Image src={imageSrc} alt="Profile" width={40} height={40} className="rounded-full border border-white/10" />
-              <span className="text-white text-sm truncate">{userInfo?.profileImage || 'Not Set'}</span>
+              <span className="text-white text-sm truncate">
+                {localUser.profileImage || 'Not Set'}
+              </span>
             </div>
           )}
         </div>
@@ -184,6 +184,7 @@ export default function SettingsPage() {
 
       {/* Wallet Info */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Wallet */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-white text-sm mb-2">Wallet Address</h4>
           <div className="flex flex-col gap-2">
@@ -199,6 +200,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        {/* Balance */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-white text-sm mb-2">Balance</h4>
           <p className="text-white text-xl font-semibold">
@@ -206,6 +208,7 @@ export default function SettingsPage() {
           </p>
         </div>
 
+        {/* Network */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-white text-sm mb-2">Current Network</h4>
           <p className="text-white text-xl font-semibold">{networkName}</p>

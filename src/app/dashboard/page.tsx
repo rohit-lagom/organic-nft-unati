@@ -7,61 +7,49 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { formatEther } from 'viem';
 import LogoutButton from '@/components/common/button/logout-button';
-import { Web3Provider } from '@ethersproject/providers';
-
-interface AuthUserInfo {
-  name?: string;
-  email?: string;
-  profileImage?: string;
-  username?: string;
-}
+import { useAuthStore } from '@/store/auth-store';
 
 export default function DashboardPage() {
   const { userInfo: web3User } = useWeb3AuthUser();
-  const { address, connector } = useAccount();
+  const {
+    walletAddress,
+    userName,
+    name,
+    email,
+    profileImage,
+    setAuth,
+  } = useAuthStore();
+  const { address, connector, isConnected } = useAccount();
   const { data: balanceData } = useBalance({ address });
 
-  const [userInfo, setUserInfo] = useState<Partial<AuthUserInfo> | null>(null);
-  const [walletAddress, setWalletAddress] = useState<string | null>(null);
-  const [masked, setMasked] = useState(true);
   const [networkName, setNetworkName] = useState<string>('Loading...');
+  const [masked, setMasked] = useState(true);
   const [copied, setCopied] = useState(false);
 
-  // Load User Info (including username)
+  // Sync auth store from wallet/web3auth
   useEffect(() => {
-    const cached = localStorage.getItem('organic-user');
-    if (cached) {
-      setUserInfo(JSON.parse(cached));
-    } else if (web3User) {
-      localStorage.setItem('organic-user', JSON.stringify(web3User));
-      setUserInfo(web3User);
-    }
-  }, [web3User]);
+    const username = (web3User as Record<string, unknown>)?.username as string | undefined;
 
-  // Load Wallet Address
-  useEffect(() => {
-    const loadWallet = async () => {
-      if (address) {
-        localStorage.setItem('organic-wallet', address);
-        setWalletAddress(address);
-      } else if (connector) {
-        try {
-          const provider = await connector.getProvider();
-          const ethersProvider = new Web3Provider(provider as ExternalProvider);
-          const signer = ethersProvider.getSigner();
-          const web3AuthAddress = await signer.getAddress();
-          setWalletAddress(web3AuthAddress);
-          localStorage.setItem('organic-wallet', web3AuthAddress);
-        } catch (err) {
-          console.error('Failed to fetch Web3Auth wallet address', err);
-        }
-      } else {
-        const cached = localStorage.getItem('organic-wallet');
-        if (cached) setWalletAddress(cached);
-      }
-    };
-    loadWallet();
-  }, [address, connector]);
+    if (isConnected && address) {
+      setAuth(
+        address,
+        username ?? userName,
+        web3User?.name ?? name,
+        web3User?.email ?? email,
+        web3User?.profileImage ?? profileImage
+      );
+    }
+  }, [
+    address,
+    isConnected,
+    web3User,
+    walletAddress,
+    setAuth,
+    userName,
+    name,
+    email,
+    profileImage,
+  ]);
 
   // Fetch Network Name
   useEffect(() => {
@@ -95,7 +83,8 @@ export default function DashboardPage() {
   const toggleMask = () => setMasked(!masked);
   const maskedAddress =
     walletAddress && masked ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : walletAddress;
-  const imageSrc = userInfo?.profileImage || '/Avatar.jpg';
+
+  const imageSrc = profileImage?.trim() ? profileImage : '/Avatar.jpg';
 
   return (
     <div className="space-y-8">
@@ -105,10 +94,10 @@ export default function DashboardPage() {
           <Image src={imageSrc} alt="User Avatar" width={56} height={56} className="rounded-full border border-white/10" />
           <div>
             <h2 className="text-lg font-semibold text-white">
-              Welcome, {userInfo?.name || 'Anonymous'}
+              Welcome, {name || web3User?.name || 'Anonymous'}
             </h2>
-            <p className="text-gray-400 text-sm">@{userInfo?.username || 'username'}</p>
-            <p className="text-gray-400 text-sm">{userInfo?.email || 'No email'}</p>
+            <p className="text-gray-400 text-sm">@{userName || 'username'}</p>
+            <p className="text-gray-400 text-sm">{email || web3User?.email || 'No email'}</p>
           </div>
         </div>
         <LogoutButton />

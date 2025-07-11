@@ -9,6 +9,7 @@ import { headers } from "next/headers";
 // IMP END - SSR
 import { Inter } from 'next/font/google';
 import "./globals.css";
+import HydrationProvider from "@/components/auth/hydration-provider";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -36,6 +37,8 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} antialiased`}>
         {/* IMP START - SSR */}
+        <HydrationProvider />
+
         <Provider web3authInitialState={web3authInitialState}>
           {children}
         </Provider>
