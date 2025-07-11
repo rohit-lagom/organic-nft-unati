@@ -32,6 +32,8 @@ export function Navbar() {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [redirectAfterConnect, setRedirectAfterConnect] = useState(false);
   const [showAccountCreated, setShowAccountCreated] = useState(false);
+  const [isAtTop, setIsAtTop] = useState(true);
+
   const dropdownRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -57,17 +59,21 @@ export function Navbar() {
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (
-        modalRef.current &&
-        !modalRef.current.contains(e.target as Node) &&
-        !isRedirecting
-      ) {
+      if (modalRef.current && !modalRef.current.contains(e.target as Node) && !isRedirecting) {
         handleGoToDashboard();
       }
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [isRedirecting]);
+
+  useEffect(() => {
+    const onScroll = () => {
+      setIsAtTop(window.scrollY <= 10);
+    };
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const handleConnect = async () => {
     try {
@@ -112,11 +118,16 @@ export function Navbar() {
         </div>
       )}
 
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#242424] backdrop-blur-lg border-b border-white/10 shadow-md">
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          isAtTop
+            ? 'bg-[#242424]/60 backdrop-blur-lg border-b border-white/10 shadow-md'
+            : 'bg-[#242424] border-b border-white/5 shadow'
+        }`}
+      >
         <div className="flex items-center justify-between max-w-7xl mx-auto px-6 md:px-8 py-4">
           <Link href="/" className="flex items-center gap-3">
-            <Image src={NavLogo} alt="Logo"  height={48} className="rounded-lg" />
-            {/* <span className="text-white text-lg font-semibold">Organic NFTs</span> */}
+            <Image src={NavLogo} alt="Logo" height={48} className="rounded-lg" />
           </Link>
 
           <nav className="hidden md:flex items-center gap-6 text-white text-sm">
