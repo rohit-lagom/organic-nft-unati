@@ -3,7 +3,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useWeb3AuthConnect, useWeb3AuthUser } from '@web3auth/modal/react';
+import { useWeb3AuthConnect } from '@web3auth/modal/react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/common/button/button';
