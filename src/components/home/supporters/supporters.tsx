@@ -3,23 +3,24 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
-import jaggery from '@/assets/images/products/jaggery.jpg';
-import appleCider from '@/assets/images/products/apple-cider.jpg';
+// import jaggery from '@/assets/images/products/jaggery.jpg';
+// import appleCider from '@/assets/images/products/apple-cider.jpg';
 import tea from '@/assets/images/products/tea.jpg';
 import murabba from '@/assets/images/products/murabba.jpg';
+import DottedBG from '@/assets/images/DottedBG.png';
 
 const Supporters = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
   const supporterLogos = [
-    { src: jaggery, alt: 'Organic Certifier A', url: '#' },
-    { src: appleCider, alt: 'Organic Certifier B', url: '#' },
+    { src: tea, alt: 'Organic Certifier A', url: '#' },
+    { src: murabba, alt: 'Organic Certifier B', url: '#' },
     { src: tea, alt: 'Organic Certifier C', url: '#' },
     { src: murabba, alt: 'Organic Certifier D', url: '#' },
   ];
 
-  const scrollingLogos = [...supporterLogos,...supporterLogos];
+  const scrollingLogos = [...supporterLogos, ...supporterLogos];
 
   useEffect(() => {
     const container = containerRef.current;
@@ -44,7 +45,15 @@ const Supporters = () => {
   }, [isHovered]);
 
   return (
-    <section className="bg-[#242424] text-white px-4 sm:px-6 md:px-8 py-16 sm:py-24 lg:py-32">
+    <section
+      className="relative bg-[#242424] text-white overflow-hidden min-h-[50vh] flex items-center px-4 sm:px-6 md:px-8 py-16 sm:py-24 lg:py-32 bg-contain"
+      style={{
+        backgroundImage: `url(${DottedBG.src})`,
+        backgroundRepeat: 'repeat',
+        backgroundAttachment: 'fixed',
+        backgroundSize: 'contain',
+      }}
+    >
       <div className="max-w-7xl mx-auto flex flex-col items-center gap-10 overflow-hidden">
         <div className="text-center">
           <h2 className="text-4xl md:text-5xl font-extrabold mb-4">

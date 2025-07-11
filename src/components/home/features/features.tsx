@@ -8,7 +8,10 @@ import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-import card1 from '@/assets/images/Logo.png'; // Replace with real images later
+import audit from '@/assets/images/features/audit.png'; 
+import certificate from '@/assets/images/features/certificate.png'; 
+import verification from '@/assets/images/features/verification.png'; 
+import scale from '@/assets/images/features/scale.png'; 
 
 const features = [
   {
@@ -17,7 +20,7 @@ const features = [
       'Mint verifiable credentials directly on-chain with farmer ID, standards, and validity.',
     href: '#',
     bg: 'from-purple-500 to-indigo-500',
-    image: card1,
+    image: certificate,
   },
   {
     title: 'Public Verification Portal',
@@ -25,7 +28,7 @@ const features = [
       'Instantly verify any certificate by ID, farmer name, or product.',
     href: '#',
     bg: 'from-pink-400 to-orange-400',
-    image: card1,
+    image: verification,
   },
   {
     title: 'Audit-proof Traceability',
@@ -33,7 +36,7 @@ const features = [
       'Track every change on-chain — trusted by regulators, buyers, and consumers.',
     href: '#',
     bg: 'from-green-400 to-blue-500',
-    image: card1,
+    image: audit,
   },
   {
     title: 'Made To Scale',
@@ -41,7 +44,7 @@ const features = [
       'Immutable records with high-speed search for rapid access and scalability.',
     href: '#',
     bg: 'from-blue-400 to-purple-600',
-    image: card1,
+    image: scale,
   },
 ];
 
