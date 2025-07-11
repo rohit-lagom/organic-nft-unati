@@ -40,9 +40,9 @@ export function Footer() {
     <footer className="bg-[#242424] text-gray-300 px-4 sm:px-6 md:px-8 py-16 sm:pt-24 lg:pt-32">
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-12 max-w-7xl mx-auto">
         <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-2">
-            <Image src={Logo} alt="Logo" width={32} height={32} className="rounded-md" />
-            <span className="text-white text-2xl lg:text-3xl font-semibold">Organic NFTs</span>
+          <div className="flex items-center gap-2 pb-10">
+            <Image src={Logo} alt="Logo"  height={272} className="rounded-md" />
+            <span className="text-white text-2xl lg:text-3xl font-semibold"></span>
           </div>
         </div>
 
