@@ -6,6 +6,8 @@ import StackIcon from '@/assets/images/create/Stack.svg';
 import DualPhotoIcon from '@/assets/images/create/DualPhoto.svg';
 import SphereIcon from '@/assets/images/create/Sphere.svg';
 import HeroBg from '@/assets/images/HeroBg.png';
+import Button from '@/components/common/button/button';
+
 
 interface Card {
   title: string;
@@ -15,23 +17,23 @@ interface Card {
 
 const cards: Card[] = [
   {
-    title: 'Generate a collection',
+    title: 'Explore Certificates',
     icon: StackIcon,
-    hoverBg: 'from-purple-600 to-fuchsia-600',
+    hoverBg: 'from-green-500 to-emerald-600',
   },
   {
-    title: 'Drop your artwork',
+    title: 'Search Certificates',
     icon: DualPhotoIcon,
-    hoverBg: 'from-pink-500 to-yellow-400',
+    hoverBg: 'from-blue-500 to-cyan-500',
   },
   {
-    title: 'Build your world',
+    title: 'Audit-trail',
     icon: SphereIcon,
-    hoverBg: 'from-cyan-400 to-blue-500',
+    hoverBg: 'from-purple-600 to-fuchsia-600',
   },
 ];
 
-export default function Create() {
+export default function PublicExplorerSection() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [floatOffset, setFloatOffset] = useState({ x: 0, y: 0 });
 
@@ -65,6 +67,7 @@ export default function Create() {
         priority
       />
 
+      {/* Floating Icons */}
       <div
         className="absolute inset-0 z-0 flex flex-wrap justify-center items-center opacity-10 pointer-events-none"
         style={{
@@ -75,7 +78,7 @@ export default function Create() {
         {[StackIcon, DualPhotoIcon, SphereIcon, StackIcon].map((icon, idx) => (
           <div
             key={idx}
-            className="m-8 p-6 border border-white/10 rounded-xl backdrop-blur-md bg-white/5"
+            className="m-6 md:m-8 p-6 border border-white/10 rounded-xl backdrop-blur-md bg-white/5"
           >
             <Image
               src={icon}
@@ -88,6 +91,7 @@ export default function Create() {
         ))}
       </div>
 
+      {/* Heading & CTA */}
       <div
         className="relative z-10 text-center max-w-2xl mx-auto"
         style={{
@@ -95,17 +99,18 @@ export default function Create() {
           transition: 'transform 0.2s ease-out',
         }}
       >
-        <h2 className="text-3xl sm:text-4xl md:text-6xl font-extrabold leading-tight mb-6">
-          Start free and <br className="hidden sm:block" /> create your own story
+        <h2 className="text-3xl sm:text-4xl md:text-6xl font-extrabold leading-tight mb-8">
+          Know Your Farmer.<br className="hidden sm:block" /> Verify The Source.
         </h2>
 
-        <button className="mt-4 px-8 py-4 bg-purple-600 cursor-pointer hover:bg-purple-700 text-white text-lg font-semibold rounded-full shadow-md hover:shadow-lg transition transform hover:scale-105">
-          + Create Now
-        </button>
+        <Button href="#" className="bg-green-600 hover:bg-green-700">
+          Launch Public Explorer
+        </Button>
       </div>
 
+      {/* Cards */}
       <div
-        className="relative z-10 mt-16 flex flex-col sm:flex-row items-center gap-6"
+        className="relative z-10 mt-16 grid grid-cols-1 md:grid-cols-3 gap-6"
         style={{
           transform: `translate(${mousePos.x / 6}px, ${mousePos.y / 6}px)`,
           transition: 'transform 0.2s ease-out',
@@ -114,7 +119,7 @@ export default function Create() {
         {cards.map((card, index) => (
           <div
             key={index}
-            className={`group w-60 h-60 lg:w-72 lg:h-72 rounded-2xl border border-white/10 flex flex-col items-center justify-center text-center transition-all duration-500 ease-in-out cursor-pointer relative overflow-hidden`}
+            className={`group w-60 h-60 sm:w-64 sm:h-64 md:w-72 md:h-72 rounded-2xl border border-white/10 flex flex-col items-center justify-center text-center transition-all duration-500 ease-in-out cursor-pointer relative overflow-hidden`}
           >
             <div
               className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${card.hoverBg}
