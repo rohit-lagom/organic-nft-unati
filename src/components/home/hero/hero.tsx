@@ -3,9 +3,7 @@
 import Image from 'next/image';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
-interface HeroProps {
-  onCreateClick?: () => void;
-}
+
 import HeroBg from '@/assets/images/HeroBg.png';
 
 import left1 from '@/assets/images/left/left1.webp';
@@ -34,7 +32,7 @@ const stats = [
   { value: '100% publicly', label: 'verifiable certificates' },
 ];
 
-export function Hero({ onCreateClick }: HeroProps) {
+export function Hero() {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const y = useTransform(scrollYProgress, [0, 1], [0, -80]);
