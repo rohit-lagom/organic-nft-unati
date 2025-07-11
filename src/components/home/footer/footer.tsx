@@ -3,27 +3,33 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import Logo from '@/assets/images/Logo.png';
-import { Twitter, Instagram, Youtube, Linkedin } from 'lucide-react';
+import { Facebook, Instagram, Linkedin } from 'lucide-react';
 
 const footerSections = [
   {
-    title: 'Product',
-    links: ['Organicverse', 'Drops', 'NFT generator', 'Smart contract', 'Forms'],
-  },
-  {
-    title: 'Resources',
-    links: ['Help docs', 'Organic School', 'Discover', 'Blog', 'Made with Organic', 'Newsletter'],
+    title: 'Organic Products',
+    links: ['Jaggery', 'Apple Cider', 'Tea', 'Murabbas', 'Vinegar', 'Pickles'],
   },
   {
     title: 'Company',
-    links: ['About us', 'Careers'],
+    links: ['About Us', 'Careers', 'Contact'],
+  },
+];
+
+const certifierConsumerSections = [
+  {
+    title: 'For Certifiers',
+    links: ['Issue Certificate', 'Join as a Certifier'],
+  },
+  {
+    title: 'For Consumers',
+    links: ['Explore Certificates', 'Verify Certificates', 'Explore Products'],
   },
 ];
 
 const socialLinks = [
-  { name: 'Twitter', icon: Twitter },
+  { name: 'Facebook', icon: Facebook },
   { name: 'Instagram', icon: Instagram },
-  { name: 'YouTube', icon: Youtube },
   { name: 'LinkedIn', icon: Linkedin },
 ];
 
@@ -41,25 +47,51 @@ export function Footer() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 text-sm md:text-base lg:text-lg">
-          {footerSections.map((section) => (
-            <div key={section.title}>
-              <h3 className="text-white font-semibold mb-4 text-base md:text-lg lg:text-xl">
-                {section.title}
-              </h3>
-              <ul className="space-y-2">
-                {section.links.map((link) => (
-                  <li key={link}>
-                    <Link href="#" className={linkClass}>
-                      {link}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div>
+            <h3 className="text-white font-semibold mb-4 text-base md:text-lg lg:text-xl">
+              {footerSections[0].title}
+            </h3>
+            <ul className="space-y-2">
+              {footerSections[0].links.map((link) => (
+                <li key={link}>
+                  <Link href="#" className={linkClass}>{link}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
           <div>
-            <h3 className="text-white font-semibold mb-4 text-base md:text-lg lg:text-xl">Connect</h3>
+            {certifierConsumerSections.map((section) => (
+              <div key={section.title} className="mb-6 last:mb-0">
+                <h3 className="text-white font-semibold mb-4 text-base md:text-lg lg:text-xl">
+                  {section.title}
+                </h3>
+                <ul className="space-y-2">
+                  {section.links.map((link) => (
+                    <li key={link}>
+                      <Link href="#" className={linkClass}>{link}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <div>
+            <h3 className="text-white font-semibold mb-4 text-base md:text-lg lg:text-xl">
+              {footerSections[1].title}
+            </h3>
+            <ul className="space-y-2">
+              {footerSections[1].links.map((link) => (
+                <li key={link}>
+                  <Link href="#" className={linkClass}>{link}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-white font-semibold mb-4 text-base md:text-lg lg:text-xl">Follow Us</h3>
             <ul className="space-y-3">
               {socialLinks.map(({ name, icon: Icon }) => (
                 <li key={name} className="flex items-center gap-2">
