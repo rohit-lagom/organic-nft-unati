@@ -131,9 +131,15 @@ export function Hero({ onCreateClick }: HeroProps) {
         <p className="mt-6 sm:mt-8 text-lg sm:text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
           Every organic certificate from Unati is now minted as an NFT — verifiable, immutable, and publicly accessible, bringing full transparency to every product.
         </p>
-        <Button onClick={onCreateClick} className="mt-8 sm:mt-10 px-8 sm:px-10 py-3 sm:py-4 text-base sm:text-lg md:text-xl shadow-md cursor-pointer">
-          + Create now
-        </Button>
+
+<div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+  <Button>
+    Verify Certificate
+  </Button>
+  <Button>
+    Search Certificate
+  </Button>
+</div>
 
         <div className="mt-16 sm:mt-20 flex flex-col md:flex-row justify-center gap-6 md:gap-8">
           {stats.map((stat, idx) => (

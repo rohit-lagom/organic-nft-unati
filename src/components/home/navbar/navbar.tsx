@@ -8,7 +8,7 @@ import Button from '@/components/common/button/button';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import Logo from '@/assets/images/Logo.png';
+import NavLogo from '@/assets/images/NavLogo.png';
 import LogoutButton from '@/components/common/button/logout-button';
 import { useAuthStore } from '@/store/auth-store';
 
@@ -113,9 +113,9 @@ export function Navbar() {
       )}
 
       <header className="fixed top-0 left-0 right-0 z-50 bg-[#242424] backdrop-blur-lg border-b border-white/10 shadow-md">
-        <div className="flex items-center justify-between px-6 md:px-8 py-4">
+        <div className="flex items-center justify-between max-w-7xl mx-auto px-6 md:px-8 py-4">
           <Link href="/" className="flex items-center gap-3">
-            <Image src={Logo} alt="Logo" width={36} height={36} className="rounded-lg" />
+            <Image src={NavLogo} alt="Logo"  height={48} className="rounded-lg" />
             {/* <span className="text-white text-lg font-semibold">Organic NFTs</span> */}
           </Link>
 
