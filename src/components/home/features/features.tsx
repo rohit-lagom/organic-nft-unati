@@ -86,15 +86,18 @@ const Features = () => {
                     </h3>
                     <ArrowRight className="w-5 h-5 text-white" />
                   </div>
-                  <p className="text-sm md:text-base mb-6 text-white/80">
+                  <p className="text-sm md:text-base  text-white/80">
                     {feature.description}
                   </p>
                 </div>
+                <div className="p-4 ">
+
                 <Image
                   src={feature.image}
                   alt={feature.title}
-                  className="rounded-xl object-cover w-full h-48 md:h-56"
+                  className="rounded-xl object-cover p-4 w-full h-full md:h-full"
                 />
+                </div>
               </Link>
             </SwiperSlide>
           ))}
