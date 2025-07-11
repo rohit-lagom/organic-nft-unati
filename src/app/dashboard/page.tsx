@@ -74,7 +74,7 @@ export default function DashboardPage() {
           1: 'Lagom Mainnet',
           5: 'Goerli Testnet',
           137: 'Polygon',
-          80001: 'Mumbai Testnet',
+          80002: 'Amoy Testnet',
         };
         setNetworkName(networks[chainId] || `Chain ID: ${chainId}`);
       } catch {
