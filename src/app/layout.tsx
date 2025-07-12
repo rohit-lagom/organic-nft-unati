@@ -4,6 +4,8 @@ import React from "react";
 import Provider from "../components/provider";
 // IMP END - Quick Start
 // IMP START - SSR
+import { Toaster } from 'sonner';
+
 import { cookieToWeb3AuthState } from "@web3auth/modal";
 import { headers } from "next/headers";
 // IMP END - SSR
@@ -17,7 +19,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-   title: 'Organic NFT',
+  title: 'Organic NFT',
   description: 'Minimal, Clean NFT Platform',
 };
 
@@ -40,6 +42,7 @@ export default async function RootLayout({
         <HydrationProvider />
 
         <Provider web3authInitialState={web3authInitialState}>
+          <Toaster richColors position="top-center" />
           {children}
         </Provider>
         {/* IMP END - SSR */}
