@@ -1,4 +1,3 @@
-// /store/auth-store.ts
 'use client';
 
 import { create } from 'zustand';
@@ -20,7 +19,7 @@ interface AuthState {
     email?: string,
     profileImage?: string
   ) => void;
-  // logout: () => void;
+  logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -34,54 +33,59 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   hydrate: () => {
     const walletAddress = localStorage.getItem('wallet_address');
-    const userName = localStorage.getItem('user_name');
-    const name = localStorage.getItem('name');
-    const email = localStorage.getItem('email');
-    const profileImage = localStorage.getItem('profile_image');
+    const userName = localStorage.getItem('user_name') || undefined;
+    const name = localStorage.getItem('name') || undefined;
+    const email = localStorage.getItem('email') || undefined;
+    const profileImage = localStorage.getItem('profile_image') || undefined;
 
     set({
       walletAddress,
-      userName: userName || undefined,
-      name: name || undefined,
-      email: email || undefined,
-      profileImage: profileImage || undefined,
+      userName,
+      name,
+      email,
+      profileImage,
       isLoggedIn: !!walletAddress,
       hydrated: true,
     });
   },
 
-  setAuth: (walletAddress, userName, name, email, profileImage) => {
-    const finalUserName = userName || generateRandomUsername();
+  setAuth: (walletAddress, incomingUserName, incomingName, incomingEmail, incomingProfileImage) => {
+    const storedUserName = localStorage.getItem('user_name') || undefined;
+    const storedEmail = localStorage.getItem('email') || undefined;
+
+    const finalUserName = incomingUserName || storedUserName || generateRandomUsername();
+    const finalEmail = storedEmail || incomingEmail;
 
     localStorage.setItem('wallet_address', walletAddress);
     localStorage.setItem('user_name', finalUserName);
-    if (name) localStorage.setItem('name', name);
-    if (email) localStorage.setItem('email', email);
-    if (profileImage) localStorage.setItem('profile_image', profileImage);
+    if (incomingName) localStorage.setItem('name', incomingName);
+    if (finalEmail) localStorage.setItem('email', finalEmail);
+    if (incomingProfileImage) localStorage.setItem('profile_image', incomingProfileImage);
 
     set({
       walletAddress,
       userName: finalUserName,
-      name,
-      email,
-      profileImage,
+      name: incomingName,
+      email: finalEmail,
+      profileImage: incomingProfileImage,
       isLoggedIn: true,
     });
   },
 
-  // logout: () => {
-  //   localStorage.removeItem('wallet_address');
-  //   localStorage.removeItem('user_name');
-  //   localStorage.removeItem('name');
-  //   localStorage.removeItem('email');
-  //   localStorage.removeItem('profile_image');
-  //   set({
-  //     walletAddress: null,
-  //     userName: undefined,
-  //     name: undefined,
-  //     email: undefined,
-  //     profileImage: undefined,
-  //     isLoggedIn: false,
-  //   });
-  // },
+  logout: () => {
+    localStorage.removeItem('wallet_address');
+    localStorage.removeItem('user_name');
+    localStorage.removeItem('name');
+    localStorage.removeItem('email');
+    localStorage.removeItem('profile_image');
+
+    set({
+      walletAddress: null,
+      userName: undefined,
+      name: undefined,
+      email: undefined,
+      profileImage: undefined,
+      isLoggedIn: false,
+    });
+  },
 }));
