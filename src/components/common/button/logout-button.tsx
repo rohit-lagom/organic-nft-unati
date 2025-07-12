@@ -46,7 +46,7 @@ export default function LogoutButton() {
       <button
         onClick={() => setShowConfirm(true)}
         disabled={loading}
-        className="flex items-center gap-2 px-4 py-2 rounded-md border border-white/20 text-sm text-white hover:bg-white/10 transition disabled:opacity-50"
+        className="cursor-pointer flex items-center gap-2 px-4 py-2 rounded-md border border-white/20 text-sm text-white hover:bg-white/10 transition disabled:opacity-50"
       >
         <LogOut className="w-4 h-4" />
         {loading ? 'Logging out...' : 'Logout'}
@@ -70,14 +70,14 @@ export default function LogoutButton() {
                   <button
                     onClick={() => setShowConfirm(false)}
                     disabled={isLoggingOut}
-                    className="w-full sm:w-auto px-4 py-2 text-sm rounded-md border border-white/20 hover:bg-white/10 transition"
+                    className="w-full cursor-pointer sm:w-auto px-4 py-2 text-sm rounded-md border border-white/20 hover:bg-white/10 transition"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleLogout}
                     disabled={isLoggingOut}
-                    className="w-full sm:w-auto px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md transition"
+                    className="w-full cursor-pointer sm:w-auto px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md transition"
                   >
                     Yes, Logout
                   </button>
