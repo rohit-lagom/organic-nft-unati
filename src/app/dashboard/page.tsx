@@ -111,10 +111,10 @@ export default function DashboardPage() {
           <div className="flex flex-col gap-2">
             <p className="text-sm text-gray-300 break-all">{maskedAddress || 'Not connected'}</p>
             <div className="flex gap-2">
-              <button onClick={toggleMask} className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10 transition">
+              <button onClick={toggleMask} className="text-xs px-3 py-1 cursor-pointer rounded-md border border-white/20 text-white hover:bg-white/10 transition">
                 {masked ? 'Show' : 'Hide'}
               </button>
-              <button onClick={handleCopy} className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10 transition">
+              <button onClick={handleCopy} className="text-xs px-3 py-1 cursor-pointer rounded-md border border-white/20 text-white hover:bg-white/10 transition">
                 {copied ? 'Copied!' : 'Copy'}
               </button>
             </div>

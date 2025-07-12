@@ -113,7 +113,7 @@ export default function SettingsPage() {
         <div className="flex gap-2">
           <button
             onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
-            className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10"
+            className="text-xs px-3 py-1 cursor-pointer rounded-md border border-white/20 text-white hover:bg-white/10"
           >
             {isEditing ? 'Done' : 'Edit'}
           </button>
@@ -190,10 +190,10 @@ export default function SettingsPage() {
           <div className="flex flex-col gap-2">
             <p className="text-sm text-gray-300 break-all">{maskedAddress || 'Not connected'}</p>
             <div className="flex gap-2">
-              <button onClick={toggleMask} className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10">
+              <button onClick={toggleMask} className="text-xs px-3 py-1 cursor-pointer rounded-md border border-white/20 text-white hover:bg-white/10">
                 {masked ? 'Show' : 'Hide'}
               </button>
-              <button onClick={handleCopy} className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10">
+              <button onClick={handleCopy} className="text-xs px-3 py-1 cursor-pointer rounded-md border border-white/20 text-white hover:bg-white/10">
                 {copied ? 'Copied!' : 'Copy'}
               </button>
             </div>
