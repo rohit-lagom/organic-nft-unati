@@ -16,7 +16,6 @@ import Button from '@/components/common/button/button';
 import LogoutButton from '@/components/common/button/logout-button';
 import { useAuthStore } from '@/store/auth-store';
 import WelcomeModal from './welcome-modal';
-import MobileNav from './mobile-nav';
 
 const navLinks = [
   { label: 'Dashboard', href: '/dashboard' },
@@ -120,18 +119,20 @@ export function Navbar() {
         </div>
       )}
 
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isAtTop
-            ? 'bg-[#242424]/60 backdrop-blur-lg border-b border-white/10 shadow-md'
-            : 'bg-[#242424] border-b border-white/5 shadow'
-        }`}
-      >
+   <header
+  className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+    isAtTop
+      ? 'bg-transparent'
+      : 'bg-[#1e1e1e]/60 backdrop-blur-md border-b border-white/10 shadow-md'
+  }`}
+>
+
         <div className="flex items-center justify-between max-w-7xl mx-auto px-6 md:px-8 py-4">
           <Link href="/" className="flex items-center gap-3">
             <Image src={NavLogo} alt="Logo" height={48} className="rounded-lg" />
           </Link>
 
+          {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-6 text-white text-sm">
             {navLinks.map(({ label, href }) => (
               <button
@@ -172,6 +173,7 @@ export function Navbar() {
             )}
           </nav>
 
+          {/* Mobile Toggle */}
           <button
             className="md:hidden text-white cursor-pointer"
             onClick={() => setMenuOpen((prev) => !prev)}
@@ -180,16 +182,49 @@ export function Navbar() {
           </button>
         </div>
 
-        <MobileNav
-          menuOpen={menuOpen}
-          navLinks={navLinks}
-          isConnected={isConnected}
-          walletAddress={walletAddress}
-          connect={handleConnect}
-          loading={loading}
-          setMenuOpen={setMenuOpen}
-          router={router}
-        />
+        {/* Mobile Nav */}
+        {menuOpen && (
+          <div className="md:hidden bg-[#242424] border-t border-white/10 p-6 space-y-4 text-white text-base">
+            {navLinks.map(({ label, href }) => (
+              <button
+                key={label}
+                onClick={async () => {
+                  if (label === 'Dashboard') {
+                    if (isConnected && walletAddress) {
+                      router.push('/dashboard');
+                    } else {
+                      await handleConnect();
+                    }
+                  } else {
+                    router.push(href);
+                  }
+                  setMenuOpen(false);
+                }}
+                className="block w-full text-left hover:text-purple-400 transition"
+              >
+                {label}
+              </button>
+            ))}
+
+            {isConnected && walletAddress ? (
+              <div className="space-y-2">
+                <Button fullWidth>{maskedAddress}</Button>
+                <LogoutButton />
+              </div>
+            ) : (
+              <Button
+                fullWidth
+                onClick={async () => {
+                  await handleConnect();
+                  setMenuOpen(false);
+                }}
+                disabled={loading}
+              >
+                {loading ? 'Connecting...' : 'Connect Wallet'}
+              </Button>
+            )}
+          </div>
+        )}
       </header>
 
       {showWelcome && (
