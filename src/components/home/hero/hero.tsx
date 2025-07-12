@@ -6,21 +6,21 @@ import { useRef } from 'react';
 
 import HeroBg from '@/assets/images/HeroBg.png';
 
-import left1 from '@/assets/images/left/left1.webp';
-import left2 from '@/assets/images/left/left2.png';
-import left3 from '@/assets/images/left/left3.png';
-import left4 from '@/assets/images/left/left4.webp';
-import left5 from '@/assets/images/left/left5.webp';
-import left6 from '@/assets/images/left/left6.webp';
-import left7 from '@/assets/images/left/left7.webp';
+import left1 from '@/assets/images/canva/left1.svg';
+import left2 from '@/assets/images/canva/left2.svg';
+import left3 from '@/assets/images/canva/left3.svg';
+import left4 from '@/assets/images/canva/left4.svg';
+import left5 from '@/assets/images/canva/left5.svg';
+import left6 from '@/assets/images/canva/left6.svg';
+import left7 from '@/assets/images/canva/left7.svg';
 
-import right1 from '@/assets/images/right/right1.webp';
-import right2 from '@/assets/images/right/right2.webp';
-import right3 from '@/assets/images/right/right3.webp';
-import right4 from '@/assets/images/right/right4.webp';
-import right5 from '@/assets/images/right/right5.webp';
-import right6 from '@/assets/images/right/right6.webp';
-import right7 from '@/assets/images/right/right7.webp';
+import right1 from '@/assets/images/canva/right1.svg';
+import right2 from '@/assets/images/canva/right2.svg';
+import right3 from '@/assets/images/canva/right3.svg';
+import right4 from '@/assets/images/canva/right4.svg';
+import right5 from '@/assets/images/canva/right5.svg';
+import right6 from '@/assets/images/canva/right6.svg';
+import right7 from '@/assets/images/canva/right7.svg';
 import Button from '@/components/common/button/button';
 
 const leftImages = [left1, left2, left3, left4, left5, left6, left7];
@@ -75,18 +75,18 @@ export function Hero() {
           transition={{ duration: 1, delay: idx * 0.1 }}
           style={{ y }}
           className={`absolute hidden lg:block z-10 ${idx === 0
-            ? '-top-6 -left-15 md:w-32 md:h-20 lg:w-48 lg:h-36'
+            ? '-top-6 -left-10 md:w-32 md:h-20 lg:w-48 lg:h-36 '
             : idx === 1
-              ? 'top-18 -left-15 z-20 md:w-32 md:h-32 lg:w-56 lg:h-76'
+              ? 'top-24 -left-20 z-20 md:w-32 md:h-32 lg:w-56 lg:h-72'
               : idx === 2
-                ? 'top-12 left-20  md:w-32 md:h-24 lg:w-56 lg:h-64'
+                ? 'top-25 left-32  md:w-32 md:h-24 lg:w-56 lg:h-56'
                 : idx === 3
-                  ? 'top-88  -left-26 md:w-32 md:h-24 lg:w-56 lg:h-64'
+                  ? 'top-86  -left-13 md:w-32 md:h-24 lg:w-56 lg:h-64'
                   : idx === 4
-                    ? 'top-68 left-18 md:w-32 md:h-24 lg:w-56 lg:h-76'
+                    ? 'top-74 left-34 md:w-32 md:h-24 lg:w-56 lg:h-72'
                     : idx === 5
-                      ? 'top-[33rem] -left-20 md:w-32 md:h-24 lg:w-56 lg:h-58'
-                      : 'top-[32rem] left-16 md:w-32 md:h-24 lg:w-48 lg:h-56'
+                      ? 'top-[37rem] -left-0 md:w-32 md:h-24 lg:w-42 lg:h-48'
+                      : 'top-[34rem] left-36 md:w-32 md:h-24 lg:w-42 lg:h-48'
             }`}
         >
           <Image src={img} alt={`Left ${idx + 1}`} className="w-full h-full" />
@@ -101,18 +101,18 @@ export function Hero() {
           transition={{ duration: 1, delay: idx * 0.1 }}
           style={{ y }}
           className={`absolute hidden lg:block z-10 ${idx === 0
-            ? '-top-2 -right-5 md:w-20 md:h-20 lg:w-48 lg:h-36'
-            : idx === 2
-              ? 'top-16 -right-15 md:w-28 md:h-32 lg:w-56 lg:h-96'
-              : idx === 1
-                ? 'top-24 right-20 md:w-24 md:h-24 lg:w-56 lg:h-64'
-                : idx === 4
-                  ? 'top-[24.5rem] -right-26 md:w-24 md:h-24 lg:w-56 lg:h-64'
-                  : idx === 3
-                    ? 'top-70 right-20 md:w-24 md:h-24 lg:w-56 lg:h-84'
-                    : idx === 6
-                      ? 'top-[36rem] -right-20 md:w-24 md:h-24 lg:w-56 lg:h-56'
-                      : 'top-[35rem] right-24 md:w-24 md:h-24 lg:w-48 lg:h-56'
+            ? '-top-6 -right-10 md:w-32 md:h-20 lg:w-48 lg:h-36 '
+            : idx === 1
+              ? 'top-24 -right-20 z-20 md:w-32 md:h-32 lg:w-64 lg:h-72'
+              : idx === 2
+                ? 'top-25 right-32  md:w-32 md:h-24 lg:w-56 lg:h-56'
+                : idx === 3
+                  ? 'top-86  -right-13 md:w-32 md:h-24 lg:w-56 lg:h-64'
+                  : idx === 4
+                    ? 'top-74 right-34 md:w-32 md:h-24 lg:w-64 lg:h-72'
+                    : idx === 5
+                      ? 'top-[37rem] -right-0 md:w-32 md:h-24 lg:w-42 lg:h-48'
+                      : 'top-[35rem] right-36 md:w-32 md:h-24 lg:w-42 lg:h-48'
             }`}
         >
           <Image src={img} alt={`Right ${idx + 1}`} className="w-full h-full" />
