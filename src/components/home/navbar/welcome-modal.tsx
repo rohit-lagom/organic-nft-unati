@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Button from '@/components/common/button/button';
 
 export default function WelcomeModal({
@@ -18,7 +17,6 @@ export default function WelcomeModal({
   const modalRef = useRef<HTMLDivElement>(null);
   const [masked, setMasked] = useState(true);
   const [copied, setCopied] = useState(false);
-  const router = useRouter();
 
   const toggleMask = () => setMasked(!masked);
 
@@ -39,7 +37,7 @@ export default function WelcomeModal({
     return () => clearTimeout(timeout);
   }, [onGoToDashboard]);
 
-  // Click outside to close
+  // Close when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
@@ -68,9 +66,7 @@ export default function WelcomeModal({
         <h2 className="text-white text-xl font-semibold">
           Welcome {userName || 'Rockstar'}!
         </h2>
-        <p className="text-white/70">
-          You have successfully logged in via Web3Auth.
-        </p>
+        <p className="text-white/70">You have successfully logged in via Web3Auth.</p>
 
         <div className="bg-[#2a2a2a] p-3 rounded-md border border-white/10 text-white text-sm break-all">
           <p className="mb-2">This is your wallet address:</p>

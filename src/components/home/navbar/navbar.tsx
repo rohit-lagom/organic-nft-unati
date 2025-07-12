@@ -42,31 +42,37 @@ export function Navbar() {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleConnect = async () => {
-    try {
-      const provider = await connect();
+ const handleConnect = async () => {
+  try {
+    const provider = await connect();
 
-      if (!provider) {
-        toast.warning('Wallet not connected. Please try again.');
-        return;
-      }
+    if (!provider) {
+      toast.warning('Wallet not connected. Please try again.');
+      return;
+    }
 
-      if (!sessionStorage.getItem('welcome_shown')) {
-        sessionStorage.setItem('welcome_shown', 'true');
-        setShowAccountCreated(true);
-        setTimeout(() => setShowAccountCreated(false), 6000);
-        setTimeout(() => setShowWelcome(true), 2000);
-      }
-    } catch (err: any) {
-      console.error('Connection failed:', err);
-      const msg = err?.message?.toLowerCase();
-      if (msg?.includes('rejected') || msg?.includes('cancelled')) {
+    if (!sessionStorage.getItem('welcome_shown')) {
+      sessionStorage.setItem('welcome_shown', 'true');
+      setShowAccountCreated(true);
+      setTimeout(() => setShowAccountCreated(false), 6000);
+      setTimeout(() => setShowWelcome(true), 2000);
+    }
+  } catch (err: unknown) {
+    console.error('Connection failed:', err);
+
+    if (typeof err === 'object' && err !== null && 'message' in err) {
+      const msg = String((err as { message: string }).message).toLowerCase();
+      if (msg.includes('rejected') || msg.includes('cancelled')) {
         toast.warning('User rejected the wallet connection.');
       } else {
         toast.error('Connection failed. Please try again.');
       }
+    } else {
+      toast.error('An unknown error occurred.');
     }
-  };
+  }
+};
+
 
   useEffect(() => {
     if (isConnected && address) {
