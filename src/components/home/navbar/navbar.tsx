@@ -36,43 +36,40 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
-  const [showAccountCreated, setShowAccountCreated] = useState(false);
   const [redirectAfterConnect, setRedirectAfterConnect] = useState(false);
   const [isAtTop, setIsAtTop] = useState(true);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
- const handleConnect = async () => {
-  try {
-    const provider = await connect();
+  const handleConnect = async () => {
+    try {
+      const provider = await connect();
 
-    if (!provider) {
-      toast.warning('Wallet not connected. Please try again.');
-      return;
-    }
-
-    if (!sessionStorage.getItem('welcome_shown')) {
-      sessionStorage.setItem('welcome_shown', 'true');
-      setShowAccountCreated(true);
-      setTimeout(() => setShowAccountCreated(false), 6000);
-      setTimeout(() => setShowWelcome(true), 2000);
-    }
-  } catch (err: unknown) {
-    console.error('Connection failed:', err);
-
-    if (typeof err === 'object' && err !== null && 'message' in err) {
-      const msg = String((err as { message: string }).message).toLowerCase();
-      if (msg.includes('rejected') || msg.includes('cancelled')) {
-        toast.warning('User rejected the wallet connection.');
-      } else {
-        toast.error('Connection failed. Please try again.');
+      if (!provider) {
+        toast.warning('Wallet not connected. Please try again.');
+        return;
       }
-    } else {
-      toast.error('An unknown error occurred.');
-    }
-  }
-};
 
+      if (!sessionStorage.getItem('welcome_shown')) {
+        sessionStorage.setItem('welcome_shown', 'true');
+        toast.success('Account created successfully!');
+        setTimeout(() => setShowWelcome(true), 2000);
+      }
+    } catch (err: unknown) {
+      console.error('Connection failed:', err);
+
+      if (typeof err === 'object' && err !== null && 'message' in err) {
+        const msg = String((err as { message: string }).message).toLowerCase();
+        if (msg.includes('rejected') || msg.includes('cancelled')) {
+          toast.warning('User rejected the wallet connection.');
+        } else {
+          toast.error('Connection failed. Please try again.');
+        }
+      } else {
+        toast.error('An unknown error occurred.');
+      }
+    }
+  };
 
   useEffect(() => {
     if (isConnected && address) {
@@ -119,20 +116,13 @@ export function Navbar() {
 
   return (
     <>
-      {showAccountCreated && (
-        <div className="fixed top-5 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-md shadow-lg z-[999] transition">
-          Account created successfully!
-        </div>
-      )}
-
-   <header
-  className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-    isAtTop
-      ? 'bg-transparent'
-      : 'bg-[#1e1e1e]/60 backdrop-blur-md border-b border-white/10 shadow-md'
-  }`}
->
-
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          isAtTop
+            ? 'bg-transparent'
+            : 'bg-[#1e1e1e]/60 backdrop-blur-md border-b border-white/10 shadow-md'
+        }`}
+      >
         <div className="flex items-center justify-between max-w-7xl mx-auto px-6 md:px-8 py-4">
           <Link href="/" className="flex items-center gap-3">
             <Image src={NavLogo} alt="Logo" height={48} className="rounded-lg" />
