@@ -75,19 +75,30 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const handleConnect = async () => {
-    try {
-      await connect();
-      if (!sessionStorage.getItem('welcome_shown')) {
+const handleConnect = async () => {
+  try {
+    await connect();
+    if (!sessionStorage.getItem('welcome_shown')) {
+      sessionStorage.setItem('welcome_shown', 'true');
+
+      // Show "Account created successfully!" immediately
+      setShowAccountCreated(true);
+
+      // Hide it after 3 seconds
+      setTimeout(() => {
+        setShowAccountCreated(false);
+      }, 6000);
+
+      // Delay the welcome modal
+      setTimeout(() => {
         setShowWelcome(true);
-        sessionStorage.setItem('welcome_shown', 'true');
-        setShowAccountCreated(true);
-        setTimeout(() => setShowAccountCreated(false), 3000);
-      }
-    } catch (err) {
-      console.error('Connection failed:', err);
+      }, 2000); // Show modal after 600ms
     }
-  };
+  } catch (err) {
+    console.error('Connection failed:', err);
+  }
+};
+
 
   const handleGoToDashboard = () => {
     if (isRedirecting) return;
@@ -224,7 +235,7 @@ export function Navbar() {
       </header>
 
       {showWelcome && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-[999]">
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-md flex items-center justify-center z-[999]">
           <div
             ref={modalRef}
             className="bg-[#1f1f1f] p-8 rounded-2xl shadow-xl text-center space-y-5 border border-white/10 w-[90%] max-w-md"
