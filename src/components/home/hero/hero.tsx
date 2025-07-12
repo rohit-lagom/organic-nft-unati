@@ -127,7 +127,7 @@ export function Hero() {
         </h1>
 
         <p className="mt-6 sm:mt-8 text-lg sm:text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-          Every organic certificate from Unati is now minted as an NFT — verifiable, immutable, and publicly accessible, bringing full transparency to every product.
+          Every organic certificate from Unati is now minted as an NFT  verifiable, immutable, and publicly accessible, bringing full transparency to every product.
         </p>
 
 <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
