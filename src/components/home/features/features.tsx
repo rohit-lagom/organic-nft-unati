@@ -11,7 +11,7 @@ import 'swiper/css/pagination';
 import audit from '@/assets/images/features/audit.png'; 
 import certificate from '@/assets/images/features/certificate.png'; 
 import verification from '@/assets/images/features/verification.png'; 
-import scale from '@/assets/images/features/scale.png'; 
+import scale from '@/assets/images/features/instant-search.png'; 
 
 const features = [
   {
@@ -39,7 +39,7 @@ const features = [
     image: audit,
   },
   {
-    title: 'Made To Scale',
+    title: 'Instant Search',
     description:
       'Immutable records with high-speed search for rapid access and scalability.',
     href: '#',
