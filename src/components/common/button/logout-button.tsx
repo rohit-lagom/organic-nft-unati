@@ -14,7 +14,9 @@ export default function LogoutButton() {
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
+    setShowConfirm(false);
     try {
+      localStorage.setItem('logout_intent', 'true'); // 👈 Flag to prevent redirect to /?wallet=false
       await disconnect();
       localStorage.removeItem('organic-user');
       localStorage.removeItem('organic-wallet');
@@ -40,7 +42,6 @@ export default function LogoutButton() {
 
       {error && <p className="text-red-400 text-sm mt-1">{error}</p>}
 
-      {/* Confirmation Modal */}
       {showConfirm && (
         <div className="min-h-screen fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-[#1e1e1e] border border-white/10 rounded-xl shadow-lg w-full max-w-sm p-6 text-white">

@@ -1,16 +1,22 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { useWeb3AuthConnect, useWeb3AuthUser } from '@web3auth/modal/react';
-import { useAccount } from 'wagmi';
-import { useRouter } from 'next/navigation';
-import Button from '@/components/common/button/button';
-import { Menu, X } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { Menu, X } from 'lucide-react';
+import { toast } from 'sonner';
+import {
+  useWeb3AuthConnect,
+  useWeb3AuthUser,
+} from '@web3auth/modal/react';
+import { useAccount } from 'wagmi';
 import NavLogo from '@/assets/images/NavLogo.png';
+import Button from '@/components/common/button/button';
 import LogoutButton from '@/components/common/button/logout-button';
 import { useAuthStore } from '@/store/auth-store';
+import WelcomeModal from './welcome-modal';
+import MobileNav from './mobile-nav';
 
 const navLinks = [
   { label: 'Dashboard', href: '/dashboard' },
@@ -18,24 +24,50 @@ const navLinks = [
 ];
 
 export function Navbar() {
-  const { connect, loading } = useWeb3AuthConnect();
+  const {
+    connect,
+    loading,
+    error: connectError,
+  } = useWeb3AuthConnect();
   const { userInfo: web3User } = useWeb3AuthUser();
   const { address, isConnected } = useAccount();
-  const router = useRouter();
   const { walletAddress, userName, setAuth } = useAuthStore();
+  const router = useRouter();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
-  const [masked, setMasked] = useState(true);
-  const [copied, setCopied] = useState(false);
-  const [isRedirecting, setIsRedirecting] = useState(false);
-  const [redirectAfterConnect, setRedirectAfterConnect] = useState(false);
   const [showAccountCreated, setShowAccountCreated] = useState(false);
+  const [redirectAfterConnect, setRedirectAfterConnect] = useState(false);
   const [isAtTop, setIsAtTop] = useState(true);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const modalRef = useRef<HTMLDivElement>(null);
+
+  const handleConnect = async () => {
+    try {
+      const provider = await connect();
+
+      if (!provider) {
+        toast.warning('Wallet not connected. Please try again.');
+        return;
+      }
+
+      if (!sessionStorage.getItem('welcome_shown')) {
+        sessionStorage.setItem('welcome_shown', 'true');
+        setShowAccountCreated(true);
+        setTimeout(() => setShowAccountCreated(false), 6000);
+        setTimeout(() => setShowWelcome(true), 2000);
+      }
+    } catch (err: any) {
+      console.error('Connection failed:', err);
+      const msg = err?.message?.toLowerCase();
+      if (msg?.includes('rejected') || msg?.includes('cancelled')) {
+        toast.warning('User rejected the wallet connection.');
+      } else {
+        toast.error('Connection failed. Please try again.');
+      }
+    }
+  };
 
   useEffect(() => {
     if (isConnected && address) {
@@ -58,16 +90,6 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(e.target as Node) && !isRedirecting) {
-        handleGoToDashboard();
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [isRedirecting]);
-
-  useEffect(() => {
     const onScroll = () => {
       setIsAtTop(window.scrollY <= 10);
     };
@@ -75,47 +97,16 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-const handleConnect = async () => {
-  try {
-    await connect();
-    if (!sessionStorage.getItem('welcome_shown')) {
-      sessionStorage.setItem('welcome_shown', 'true');
-
-      // Show "Account created successfully!" immediately
-      setShowAccountCreated(true);
-
-      // Hide it after 3 seconds
-      setTimeout(() => {
-        setShowAccountCreated(false);
-      }, 6000);
-
-      // Delay the welcome modal
-      setTimeout(() => {
-        setShowWelcome(true);
-      }, 2000); // Show modal after 600ms
+  useEffect(() => {
+    if (connectError) {
+      const msg = connectError.message?.toLowerCase();
+      if (msg?.includes('rejected') || msg?.includes('cancelled')) {
+        toast.warning('User rejected the wallet connection.');
+      } else {
+        toast.error('Connection failed. Please try again.');
+      }
     }
-  } catch (err) {
-    console.error('Connection failed:', err);
-  }
-};
-
-
-  const handleGoToDashboard = () => {
-    if (isRedirecting) return;
-    setIsRedirecting(true);
-    setShowWelcome(false);
-    router.push('/dashboard');
-  };
-
-  const toggleMask = () => setMasked(!masked);
-
-  const handleCopy = async () => {
-    if (walletAddress) {
-      await navigator.clipboard.writeText(walletAddress);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
+  }, [connectError]);
 
   const maskedAddress = walletAddress
     ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
@@ -189,94 +180,25 @@ const handleConnect = async () => {
           </button>
         </div>
 
-        {menuOpen && (
-          <div className="md:hidden bg-[#242424] border-t border-white/10 p-6 space-y-4 text-white text-base">
-            {navLinks.map(({ label, href }) => (
-              <button
-                key={label}
-                onClick={async () => {
-                  if (label === 'Dashboard') {
-                    if (isConnected && walletAddress) {
-                      router.push('/dashboard');
-                    } else {
-                      setRedirectAfterConnect(true);
-                      await handleConnect();
-                    }
-                  } else {
-                    router.push(href);
-                  }
-                  setMenuOpen(false);
-                }}
-                className="block w-full text-left hover:text-purple-400 transition"
-              >
-                {label}
-              </button>
-            ))}
-
-            {isConnected && walletAddress ? (
-              <div className="space-y-2">
-                <Button fullWidth>{maskedAddress}</Button>
-                <LogoutButton />
-              </div>
-            ) : (
-              <Button
-                fullWidth
-                onClick={async () => {
-                  await handleConnect();
-                  setMenuOpen(false);
-                }}
-                disabled={loading}
-              >
-                {loading ? 'Connecting...' : 'Connect Wallet'}
-              </Button>
-            )}
-          </div>
-        )}
+        <MobileNav
+          menuOpen={menuOpen}
+          navLinks={navLinks}
+          isConnected={isConnected}
+          walletAddress={walletAddress}
+          connect={handleConnect}
+          loading={loading}
+          setMenuOpen={setMenuOpen}
+          router={router}
+        />
       </header>
 
       {showWelcome && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-md flex items-center justify-center z-[999]">
-          <div
-            ref={modalRef}
-            className="bg-[#1f1f1f] p-8 rounded-2xl shadow-xl text-center space-y-5 border border-white/10 w-[90%] max-w-md"
-          >
-            <h2 className="text-white text-xl font-semibold">
-              Welcome {userName || 'Rockstar'}!
-            </h2>
-            <p className="text-white/70">
-              You have successfully logged in via Web3Auth.
-            </p>
-
-            <div className="bg-[#2a2a2a] p-3 rounded-md border border-white/10 text-white text-sm break-all">
-              <p className="mb-2">This is your wallet address:</p>
-              <p className="font-mono">
-                {masked ? `${walletAddress?.slice(0, 6)}...${walletAddress?.slice(-4)}` : walletAddress}
-              </p>
-              <div className="flex gap-2 mt-3">
-                <button
-                  onClick={toggleMask}
-                  className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10 transition"
-                >
-                  {masked ? 'Show' : 'Hide'}
-                </button>
-                <button
-                  onClick={handleCopy}
-                  className="text-xs px-3 py-1 rounded-md border border-white/20 text-white hover:bg-white/10 transition"
-                >
-                  {copied ? 'Copied!' : 'Copy'}
-                </button>
-              </div>
-            </div>
-
-            <Button
-              onClick={handleGoToDashboard}
-              className="mt-4 w-full"
-              disabled={isRedirecting}
-            >
-              {isRedirecting ? 'Redirecting...' : 'Go to Dashboard'}
-            </Button>
-          </div>
-        </div>
+        <WelcomeModal
+          walletAddress={walletAddress}
+          userName={userName}
+          onClose={() => setShowWelcome(false)}
+          onGoToDashboard={() => router.push('/dashboard')}
+        />
       )}
     </>
   );
