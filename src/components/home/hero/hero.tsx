@@ -6,21 +6,21 @@ import { useRef } from 'react';
 
 import HeroBg from '@/assets/images/HeroBg.png';
 
-import left1 from '@/assets/images/canva/left1.svg';
-import left2 from '@/assets/images/canva/left2.svg';
-import left3 from '@/assets/images/canva/left3.svg';
-import left4 from '@/assets/images/canva/left4.svg';
-import left5 from '@/assets/images/canva/left5.svg';
-import left6 from '@/assets/images/canva/left6.svg';
-import left7 from '@/assets/images/canva/left7.svg';
+import left1 from '@/assets/images/hero/left1.svg';
+import left2 from '@/assets/images/hero/left2.svg';
+import left3 from '@/assets/images/hero/left3.svg';
+import left4 from '@/assets/images/hero/left4.svg';
+import left5 from '@/assets/images/hero/left5.svg';
+import left6 from '@/assets/images/hero/left6.svg';
+import left7 from '@/assets/images/hero/left7.svg';
 
-import right1 from '@/assets/images/canva/right1.svg';
-import right2 from '@/assets/images/canva/right2.svg';
-import right3 from '@/assets/images/canva/right3.svg';
-import right4 from '@/assets/images/canva/right4.svg';
-import right5 from '@/assets/images/canva/right5.svg';
-import right6 from '@/assets/images/canva/right6.svg';
-import right7 from '@/assets/images/canva/right7.svg';
+import right1 from '@/assets/images/hero/right1.svg';
+import right2 from '@/assets/images/hero/right2.svg';
+import right3 from '@/assets/images/hero/right3.svg';
+import right4 from '@/assets/images/hero/right4.svg';
+import right5 from '@/assets/images/hero/right5.svg';
+import right6 from '@/assets/images/hero/right6.svg';
+import right7 from '@/assets/images/hero/right7.svg';
 import Button from '@/components/common/button/button';
 
 const leftImages = [left1, left2, left3, left4, left5, left6, left7];
@@ -64,8 +64,6 @@ export function Hero() {
           </div>
         ))}
       </div>
-
-
 
       {leftImages.map((img, idx) => (
         <motion.div
@@ -130,14 +128,14 @@ export function Hero() {
           Every organic certificate from Unati is now minted as an NFT  verifiable, immutable, and publicly accessible, bringing full transparency to every product.
         </p>
 
-<div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-  <Button>
-    Verify Certificate
-  </Button>
-  <Button>
-    Search Certificate
-  </Button>
-</div>
+        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+          <Button>
+            Verify Certificate
+          </Button>
+          <Button>
+            Search Certificate
+          </Button>
+        </div>
 
         <div className="mt-16 sm:mt-20 flex flex-col md:flex-row justify-center gap-6 md:gap-8">
           {stats.map((stat, idx) => (
