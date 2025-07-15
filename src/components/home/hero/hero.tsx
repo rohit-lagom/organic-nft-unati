@@ -44,7 +44,7 @@ export function Hero() {
   return (
     <section
       ref={ref}
-      className="relative min-h-screen flex items-center justify-center bg-[#242424] text-white overflow-hidden px-4 sm:px-6 md:px-8 py-16 sm:py-24 lg:py-32"
+      className="relative min-h-screen flex items-center justify-center bg-[#242424] text-white overflow-hidden px-4 sm:px-6 md:px-8 py-16 sm:py-24 lg:py-32 2xl:py-16"
     >
       <Image src={HeroBg} alt="Hero Background" fill className="object-cover z-0" priority />
 
@@ -69,31 +69,33 @@ export function Hero() {
         ))}
       </div>
 
-      {leftImages.map((img, idx) => (
-        <motion.div
-          key={`left-${idx}`}
-          initial={{ opacity: 0, y: 80 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: idx * 0.1 }}
-          style={{ y }}
-          className={`absolute hidden lg:block z-10 ${idx === 0
-            ? '-top-6 -left-10 md:w-32 md:h-20 lg:w-48 lg:h-36'
-            : idx === 1
-              ? 'top-24 -left-20 z-20 md:w-32 md:h-32 lg:w-56 lg:h-72'
-              : idx === 2
-                ? 'top-25 left-32 md:w-32 md:h-24 lg:w-56 lg:h-56'
-                : idx === 3
-                  ? 'top-86 -left-13 md:w-32 md:h-24 lg:w-56 lg:h-64'
-                  : idx === 4
-                    ? 'top-74 left-34 md:w-32 md:h-24 lg:w-56 lg:h-72'
-                    : idx === 5
-                      ? 'top-[37rem] -left-0 md:w-32 md:h-24 lg:w-42 lg:h-48'
-                      : 'top-[34rem] left-36 md:w-32 md:h-24 lg:w-42 lg:h-48'
-            }`}
-        >
-          <Image src={img} alt={`Left ${idx + 1}`} className="w-full h-full" />
-        </motion.div>
-      ))}
+ {leftImages.map((img, idx) => (
+  <motion.div
+    key={`left-${idx}`}
+    initial={{ opacity: 0, y: 80 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 1, delay: idx * 0.1 }}
+    style={{ y }}
+    className={`absolute hidden lg:block z-10 ${
+      idx === 0
+        ? '-top-6 -left-10 2xl:-top-6 2xl:-left-10 md:w-32 md:h-20 lg:w-48 lg:h-36 2xl:w-48 2xl:h-36 xl:w-24 xl:-top-4 xl:-left-8'
+        : idx === 1
+        ? 'top-24 -left-20 2xl:top-24 2xl:-left-20 z-20 md:w-32 md:h-32 lg:w-56 lg:h-72 2xl:w-56 2xl:h-72 xl:h-48 xl:w-56 xl:top-38 xl:-left-20'
+        : idx === 2
+        ? 'top-25 left-32 2xl:top-25 2xl:left-32 md:w-32 md:h-24 lg:w-56 lg:h-56 2xl:w-56 2xl:h-56 xl:h-48 xl:w-48 xl:top-28 xl:left-20'
+        : idx === 3
+        ? 'top-86 -left-13 2xl:top-86 2xl:-left-13 md:w-32 md:h-24 lg:w-56 lg:h-64 2xl:w-56 2xl:h-64 xl:h-48 xl:w-48 xl:top-86 xl:-left-15'
+        : idx === 4
+        ? 'top-74 left-34 2xl:top-74 2xl:left-34 md:w-32 md:h-24 lg:w-56 lg:h-72 2xl:w-56 2xl:h-72 xl:h-48 xl:w-56 xl:top-74 xl:left-20'
+        : idx === 5
+        ? 'top-[37rem] -left-0 2xl:top-[37rem] 2xl:-left-0 md:w-32 md:h-24 lg:w-42 lg:h-48 2xl:w-42 2xl:h-48 xl:h-36 xl:w-36 xl:top-[34rem] xl:-left-2'
+        : 'top-[34rem] left-36 2xl:top-[34rem] 2xl:left-36 md:w-32 md:h-24 lg:w-42 lg:h-48 2xl:w-42 2xl:h-48 xl:h-36 xl:w-36 xl:top-[32rem] xl:left-28'
+    }`}
+  >
+    <Image src={img} alt={`Left ${idx + 1}`} className="w-full h-full" />
+  </motion.div>
+))}
+
 
       {rightImages.map((img, idx) => (
         <motion.div
@@ -103,25 +105,25 @@ export function Hero() {
           transition={{ duration: 1, delay: idx * 0.1 }}
           style={{ y }}
           className={`absolute hidden lg:block z-10 ${idx === 0
-            ? '-top-6 -right-10 md:w-32 md:h-20 lg:w-48 lg:h-36'
+            ? '-top-6 -right-10 2xl:-top-6 2xl:-right-10 md:w-32 md:h-20 lg:w-48 lg:h-36 2xl:w-48 2xl:h-36 xl:w-24 xl:-top-4 xl:-right-8'
             : idx === 1
-              ? 'top-24 -right-20 z-20 md:w-32 md:h-32 lg:w-64 lg:h-72'
+              ? 'top-24 -right-20 2xl:top-24 2xl:-right-20 z-20 md:w-32 md:h-32 lg:w-64 lg:h-72 2xl:w-64 2xl:h-72 xl:h-48 xl:w-56 xl:top-38 xl:-right-20'
               : idx === 2
-                ? 'top-25 right-32 md:w-32 md:h-24 lg:w-56 lg:h-56'
+                ? 'top-25 right-32 2xl:top-25 2xl:right-32 md:w-32 md:h-24 lg:w-56 lg:h-56 2xl:w-56 2xl:h-56 xl:h-48 xl:w-48 xl:top-28 xl:right-20'
                 : idx === 3
-                  ? 'top-86 -right-13 md:w-32 md:h-24 lg:w-56 lg:h-64'
+                  ? 'top-86 -right-13 2xl:top-86 2xl:-right-13 md:w-32 md:h-24 lg:w-56 lg:h-64 2xl:w-56 2xl:h-64 xl:h-48 xl:w-48 xl:top-86 xl:-right-15'
                   : idx === 4
-                    ? 'top-74 right-34 md:w-32 md:h-24 lg:w-64 lg:h-72'
+                    ? 'top-74 right-34 2xl:top-74 2xl:right-34 md:w-32 md:h-24 lg:w-64 lg:h-72 2xl:w-64 2xl:h-72 xl:h-48 xl:w-56 xl:top-74 xl:right-20'
                     : idx === 5
-                      ? 'top-[37rem] -right-0 md:w-32 md:h-24 lg:w-42 lg:h-48'
-                      : 'top-[35rem] right-36 md:w-32 md:h-24 lg:w-42 lg:h-48'
+                      ? 'top-[37rem] -right-0 2xl:top-[37rem] 2xl:-right-0 md:w-32 md:h-24 lg:w-42 lg:h-48 2xl:w-42 2xl:h-48 xl:h-36 xl:w-36 xl:top-[34rem] xl:-right-2'
+                      : 'top-[35rem] right-36 2xl:top-[35rem] 2xl:right-36 md:w-32 md:h-24 lg:w-42 lg:h-48 2xl:w-42 2xl:h-48 xl:h-36 xl:w-36 xl:top-[32rem] xl:right-28'
             }`}
         >
           <Image src={img} alt={`Right ${idx + 1}`} className="w-full h-full" />
         </motion.div>
       ))}
 
-      <div className="text-center z-20 relative max-w-5xl mx-auto mt-24 md:mt-0">
+      <div className="text-center z-20 relative max-w-5xl mx-auto mt-24 2xl:mt-0 md:mt-0">
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-extrabold leading-tight">
           Trust <span className="text-purple-500">Organic</span>
           <br className="hidden sm:block" />
