@@ -80,13 +80,13 @@ export function Hero() {
       idx === 0
         ? '-top-6 -left-10 2xl:-top-6 2xl:-left-10 md:w-32 md:h-20 lg:w-48 lg:h-36 2xl:w-48 2xl:h-36 xl:w-24 xl:-top-4 xl:-left-8'
         : idx === 1
-        ? 'top-24 -left-20 2xl:top-24 2xl:-left-20 z-20 md:w-32 md:h-32 lg:w-56 lg:h-72 2xl:w-56 2xl:h-72 xl:h-48 xl:w-56 xl:top-38 xl:-left-20'
+        ? 'top-24 -left-20 2xl:top-24 2xl:-left-20 z-20 md:w-32 md:h-32 lg:w-64 lg:h-72 2xl:w-64 2xl:h-72 xl:h-48 xl:w-56 xl:top-38 xl:-left-20'
         : idx === 2
         ? 'top-25 left-32 2xl:top-25 2xl:left-32 md:w-32 md:h-24 lg:w-56 lg:h-56 2xl:w-56 2xl:h-56 xl:h-48 xl:w-48 xl:top-28 xl:left-20'
         : idx === 3
         ? 'top-86 -left-13 2xl:top-86 2xl:-left-13 md:w-32 md:h-24 lg:w-56 lg:h-64 2xl:w-56 2xl:h-64 xl:h-48 xl:w-48 xl:top-86 xl:-left-15'
         : idx === 4
-        ? 'top-74 left-34 2xl:top-74 2xl:left-34 md:w-32 md:h-24 lg:w-56 lg:h-72 2xl:w-56 2xl:h-72 xl:h-48 xl:w-56 xl:top-74 xl:left-20'
+        ? 'top-74 left-34 2xl:top-74 2xl:left-34 md:w-32 md:h-24 lg:w-64 lg:h-72 2xl:w-64 2xl:h-72 xl:h-48 xl:w-56 xl:top-74 xl:left-20'
         : idx === 5
         ? 'top-[37rem] -left-0 2xl:top-[37rem] 2xl:-left-0 md:w-32 md:h-24 lg:w-42 lg:h-48 2xl:w-42 2xl:h-48 xl:h-36 xl:w-36 xl:top-[34rem] xl:-left-2'
         : 'top-[34rem] left-36 2xl:top-[34rem] 2xl:left-36 md:w-32 md:h-24 lg:w-42 lg:h-48 2xl:w-42 2xl:h-48 xl:h-36 xl:w-36 xl:top-[32rem] xl:left-28'
