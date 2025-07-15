@@ -2,11 +2,18 @@
 
 import { useState, useMemo } from 'react';
 import { X } from 'lucide-react';
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 
 import left1 from '@/assets/images/hero/left1.svg';
 import left3 from '@/assets/images/hero/left3.svg';
 import right2 from '@/assets/images/hero/right2.svg';
+
+interface Certificate {
+  title: string;
+  issuer: string;
+  issuedBy: string;
+  image: StaticImageData;
+}
 
 export default function VerifyCertificateModal({
   isOpen,
@@ -16,9 +23,9 @@ export default function VerifyCertificateModal({
   onClose: () => void;
 }) {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<Certificate[]>([]);
 
-  const certificates = [
+  const certificates: Certificate[] = [
     {
       title: 'Unati Apple Cider Vinegar',
       issuer: 'UAMMCL Organization',
@@ -44,7 +51,7 @@ export default function VerifyCertificateModal({
     return certificates.filter(cert =>
       `${cert.title} ${cert.issuer}`.toLowerCase().includes(q)
     );
-  }, [query]);
+  }, [query, certificates]);
 
   const handleSearch = (text?: string) => {
     const q = (text || query).toLowerCase();
@@ -60,7 +67,6 @@ export default function VerifyCertificateModal({
   return (
     <div className="fixed inset-0 z-[9999] bg-black/70 flex items-center justify-center px-4 sm:px-6 py-6 overflow-y-auto">
       <div className="bg-[#1e1e1e] text-white w-full max-w-2xl rounded-2xl shadow-xl relative">
-        {/* Close button */}
         <button
           onClick={() => {
             setQuery('');
@@ -72,11 +78,9 @@ export default function VerifyCertificateModal({
           <X className="w-6 h-6" />
         </button>
 
-        {/* Modal content */}
         <div className="p-5 sm:p-8">
           <h2 className="text-2xl font-bold mb-4 text-center">Verify Certificate</h2>
 
-          {/* Input field + Suggestions */}
           <div className="flex flex-col gap-2 relative">
             <input
               type="text"
@@ -89,7 +93,6 @@ export default function VerifyCertificateModal({
               }}
             />
 
-            {/* Suggestions */}
             {query && filteredSuggestions.length > 0 && results.length === 0 && (
               <div className="absolute top-full mt-2 w-full bg-[#2c2c2c] border border-gray-700 rounded-md divide-y divide-gray-700 z-50 max-h-60 overflow-y-auto shadow-lg">
                 {filteredSuggestions.map((item, idx) => (
@@ -117,7 +120,6 @@ export default function VerifyCertificateModal({
             )}
           </div>
 
-          {/* Results */}
           {results.length > 0 && (
             <div className="mt-6 space-y-4">
               {results.map((result, idx) => (
@@ -144,7 +146,6 @@ export default function VerifyCertificateModal({
             </div>
           )}
 
-          {/* No result */}
           {results.length === 0 && query && (
             <p className="mt-6 text-center text-sm text-gray-400">
               No certificates found.
