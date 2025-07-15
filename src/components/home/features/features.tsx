@@ -8,10 +8,10 @@ import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-import audit from '@/assets/images/features/audit.png'; 
-import certificate from '@/assets/images/features/certificate.png'; 
-import verification from '@/assets/images/features/verification.png'; 
-import scale from '@/assets/images/features/instant-search.png'; 
+import audit from '@/assets/images/features/audit.png';
+import certificate from '@/assets/images/features/certificate.png';
+import verification from '@/assets/images/features/verification.png';
+import scale from '@/assets/images/features/instant-search.png';
 
 const features = [
   {
@@ -56,64 +56,95 @@ const Features = () => {
           What Makes Our Certificates Different
         </h2>
 
-        <Swiper
-          modules={[Navigation, Pagination]}
-          slidesPerView={'auto'}
-          spaceBetween={30}
-          pagination={{
-            clickable: true,
-            el: '.custom-pagination',
-          }}
-          navigation={{
-            nextEl: '.custom-next',
-            prevEl: '.custom-prev',
-          }}
-          className="overflow-visible px-6"
-        >
-          {features.map((feature, index) => (
-            <SwiperSlide
-              key={index}
-              className="!w-[300px] md:!w-[350px] overflow-visible py-10"
-            >
-              <Link
-                href={feature.href}
-                className={`flex flex-col justify-between bg-gradient-to-br ${feature.bg} rounded-3xl shadow-lg p-6 md:p-8 transition-transform hover:scale-105 h-[500px]`}
+        {/* Mobile View (Swiper) */}
+        <div className="md:hidden">
+          <Swiper
+            modules={[Navigation, Pagination]}
+            slidesPerView={'auto'}
+            spaceBetween={24}
+            pagination={{
+              clickable: true,
+              el: '.custom-pagination',
+            }}
+            navigation={{
+              nextEl: '.custom-next',
+              prevEl: '.custom-prev',
+            }}
+            className="overflow-visible px-4"
+          >
+            {features.map((feature, index) => (
+              <SwiperSlide
+                key={index}
+                className="!w-[280px] overflow-visible py-10"
               >
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg md:text-xl font-bold text-white">
-                      {feature.title}
-                    </h3>
-                    <ArrowRight className="w-5 h-5 text-white" />
+                <Link
+                  href={feature.href}
+                  className={`flex flex-col justify-between bg-gradient-to-br ${feature.bg} rounded-3xl shadow-lg p-6 transition-transform hover:scale-105 h-[480px]`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-white">
+                        {feature.title}
+                      </h3>
+                      <ArrowRight className="w-5 h-5 text-white" />
+                    </div>
+                    <p className="text-sm text-white/80">
+                      {feature.description}
+                    </p>
                   </div>
-                  <p className="text-sm md:text-base  text-white/80">
-                    {feature.description}
-                  </p>
-                </div>
-                <div className="p-4 ">
+                  <div className="p-4">
+                    <Image
+                      src={feature.image}
+                      alt={feature.title}
+                      className="rounded-xl object-cover p-4 w-full h-full"
+                    />
+                  </div>
+                </Link>
+              </SwiperSlide>
+            ))}
+          </Swiper>
 
+          <div className="flex items-center justify-between mt-8 px-4">
+            <div className="custom-pagination flex gap-2" />
+            <div className="flex gap-4">
+              <button className="custom-prev cursor-pointer text-white/70 hover:text-white transition text-xl">
+                ←
+              </button>
+              <button className="custom-next cursor-pointer text-white/70 hover:text-white transition text-xl">
+                →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop View (Grid) */}
+        <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {features.map((feature, index) => (
+            <Link
+              key={index}
+              href={feature.href}
+              className={`flex flex-col justify-between bg-gradient-to-br ${feature.bg} rounded-3xl shadow-lg p-6 md:p-8 transition-transform hover:scale-105 h-[500px]`}
+            >
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg md:text-xl font-bold text-white">
+                    {feature.title}
+                  </h3>
+                  <ArrowRight className="w-5 h-5 text-white" />
+                </div>
+                <p className="text-sm md:text-base text-white/80">
+                  {feature.description}
+                </p>
+              </div>
+              <div className="p-4">
                 <Image
                   src={feature.image}
                   alt={feature.title}
-                  className="rounded-xl object-cover p-4 w-full h-full md:h-full"
+                  className="rounded-xl object-cover p-4 w-full h-full"
                 />
-                </div>
-              </Link>
-            </SwiperSlide>
+              </div>
+            </Link>
           ))}
-        </Swiper>
-
-        <div className="flex items-center justify-between mt-10 px-6">
-          <div className="custom-pagination flex gap-2" />
-
-          <div className="flex gap-4">
-            <button className="custom-prev cursor-pointer text-white/70 hover:text-white transition text-xl">
-              ←
-            </button>
-            <button className="custom-next cursor-pointer text-white/70 hover:text-white transition text-xl">
-              →
-            </button>
-          </div>
         </div>
       </div>
     </section>
