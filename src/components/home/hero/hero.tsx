@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import HeroBg from '@/assets/images/HeroBg.png';
 
@@ -21,9 +22,9 @@ import right4 from '@/assets/images/hero/right4.svg';
 import right5 from '@/assets/images/hero/right5.svg';
 import right6 from '@/assets/images/hero/right6.svg';
 import right7 from '@/assets/images/hero/right7.svg';
-
 import Button from '@/components/common/button/button';
 import VerifyCertificateModal from '@/components/common/modals/VerifyCertificateModal';
+
 
 const leftImages = [left1, left2, left3, left4, left5, left6, left7];
 const rightImages = [right1, right2, right3, right4, right5, right6, right7];
@@ -35,6 +36,7 @@ const stats = [
 ];
 
 export function Hero() {
+  const router = useRouter();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const y = useTransform(scrollYProgress, [0, 1], [0, -80]);
@@ -136,7 +138,9 @@ export function Hero() {
 
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
           <Button onClick={() => setVerifyModalOpen(true)}>Verify Certificate</Button>
-          <Button>Certified Products</Button>
+          <Button onClick={() => router.push('/view')}>
+  Certified Products
+            </Button>
         </div>
 
         <div className="mt-16 sm:mt-20 flex flex-col md:flex-row justify-center gap-6 md:gap-8">
