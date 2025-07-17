@@ -10,22 +10,29 @@ export default function UploadFileToPinata() {
   const [minting, setMinting] = useState(false);
   const [minted, setMinted] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !certName.trim()) {
-      setMessage('❌ Please enter certificate name and select a file');
+    if (!file || !certName.trim() || minted) {
+      setMessage('❌ Please enter a certificate name and select an image file.');
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      setMessage('❌ Only image files are allowed.');
       return;
     }
 
     setPreviewUrl(URL.createObjectURL(file));
+    setUploading(true);
+    setMessage('⏳ Uploading file...');
 
     const formData = new FormData();
     formData.append('file', file);
     formData.append('name', certName);
 
     try {
-      setMessage('⏳ Uploading file...');
       const res = await fetch('/api/pinata/upload-file', {
         method: 'POST',
         body: formData,
@@ -42,7 +49,9 @@ export default function UploadFileToPinata() {
       }
     } catch (err) {
       console.error(err);
-      setMessage('❌ Upload error');
+      setMessage('❌ Upload error. Please try again.');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -63,23 +72,23 @@ export default function UploadFileToPinata() {
       const data = await res.json();
       if (res.ok && data.IpfsHash) {
         setMetadataHash(data.IpfsHash);
-        setMessage('✅ Metadata pinned to IPFS');
+        setMessage('✅ Metadata pinned to IPFS.');
       } else {
         handleApiError('Metadata pin failed', data);
       }
     } catch (err) {
       console.error(err);
-      setMessage('❌ Metadata pin error');
+      setMessage('❌ Metadata pin error.');
     }
   };
 
   const handleMint = async () => {
     if (!metadataHash) return;
 
-    try {
-      setMinting(true);
-      setMessage('⛏️ Minting NFT...');
+    setMinting(true);
+    setMessage('⛏️ Minting NFT...');
 
+    try {
       const res = await fetch('/api/pinata/mint', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -96,7 +105,7 @@ export default function UploadFileToPinata() {
       }
     } catch (err) {
       console.error(err);
-      setMessage('❌ Mint error');
+      setMessage('❌ Mint error.');
     } finally {
       setMinting(false);
     }
@@ -117,23 +126,27 @@ export default function UploadFileToPinata() {
           Mint <span className="text-purple-500">Organic Certificate</span>
         </h2>
 
-        <input
-          type="text"
-          placeholder="Certificate Name"
-          value={certName}
-          onChange={(e) => setCertName(e.target.value)}
-          className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 placeholder-gray-300 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-        />
+        <div className="space-y-4">
+          <input
+            type="text"
+            placeholder="Certificate Name"
+            value={certName}
+            onChange={(e) => setCertName(e.target.value)}
+            disabled={uploading || minting}
+            className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
+          />
 
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleUpload}
-          className="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700"
-        />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleUpload}
+            disabled={uploading || minting}
+            className="w-full text-sm cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700 disabled:opacity-50"
+          />
+        </div>
 
         {previewUrl && (
-          <div>
+          <div className="transition-opacity duration-300">
             <p className="text-sm text-gray-300 mb-2">🖼 Image Preview:</p>
             <img
               src={previewUrl}
@@ -176,11 +189,10 @@ export default function UploadFileToPinata() {
             <button
               onClick={handleMint}
               disabled={minting || minted}
-              className={`mt-4 w-full py-3 rounded-xl font-semibold transition-all ${
-                minting || minted
+              className={`mt-4 w-full py-3 cursor-pointer rounded-xl font-semibold transition-all ${minting || minted
                   ? 'bg-gray-500 cursor-not-allowed'
                   : 'bg-green-600 hover:bg-green-700'
-              }`}
+                }`}
             >
               {minting ? '⛏️ Minting...' : minted ? '✅ Minted' : 'Mint NFT'}
             </button>
