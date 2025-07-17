@@ -12,7 +12,7 @@ export async function PUT(req: Request) {
     const { ipfsPinHash, name } = body;
 
     if (!ipfsPinHash || !name) {
-      return NextResponse.json({ error: 'Missing hash or name' }, { status: 400 });
+      return NextResponse.json({ error: 'Missing hash or  name' }, { status: 400 });
     }
 
     await updateHashMetadata(ipfsPinHash, name);
