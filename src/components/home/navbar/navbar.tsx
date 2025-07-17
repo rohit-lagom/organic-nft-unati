@@ -123,7 +123,7 @@ export function Navbar() {
             : 'bg-[#1e1e1e]/60 backdrop-blur-md border-b border-white/10 shadow-md'
         }`}
       >
-        <div className="flex items-center justify-between max-w-7xl mx-auto px-6 md:px-8 py-4">
+        <div className="flex items-center justify-between max-w-7xl mx-auto px-6 md:px-8 py-4  xl:mx-40">
           <Link href="/" className="flex items-center gap-3">
             <Image src={NavLogo} alt="Logo" height={48} className="rounded-lg" />
           </Link>
