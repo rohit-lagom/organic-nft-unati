@@ -1,12 +1,12 @@
-// app/mint/page.tsx
 'use client';
 
+import { Navbar } from '@/components/home/navbar/navbar';
 import UploadFileToPinata from '@/components/mint/UploadFileToPinata';
 
-export default function PinataUploadPage() {
+export default function MintPage() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
-      <h1 className="text-3xl font-bold mb-6">Upload File to Pinata (IPFS)</h1>
+    <main className="min-h-screen bg-[#242424]">
+      <Navbar />
       <UploadFileToPinata />
     </main>
   );

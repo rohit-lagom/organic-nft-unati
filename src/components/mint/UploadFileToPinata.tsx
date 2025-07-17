@@ -18,9 +18,7 @@ export default function UploadFileToPinata() {
       return;
     }
 
-    // Preview the image
-    const imageURL = URL.createObjectURL(file);
-    setPreviewUrl(imageURL);
+    setPreviewUrl(URL.createObjectURL(file));
 
     const formData = new FormData();
     formData.append('file', file);
@@ -40,14 +38,10 @@ export default function UploadFileToPinata() {
         setMessage('✅ Image uploaded! Pinning metadata...');
         await pinMetadata(data.IpfsHash);
       } else {
-        const errorText =
-          typeof data.error === 'string'
-            ? data.error
-            : JSON.stringify(data.error || data);
-        setMessage(`❌ Upload failed: ${errorText}`);
+        handleApiError('Upload failed', data);
       }
     } catch (err) {
-      console.error('Upload error:', err);
+      console.error(err);
       setMessage('❌ Upload error');
     }
   };
@@ -71,14 +65,10 @@ export default function UploadFileToPinata() {
         setMetadataHash(data.IpfsHash);
         setMessage('✅ Metadata pinned to IPFS');
       } else {
-        const errorText =
-          typeof data.error === 'string'
-            ? data.error
-            : JSON.stringify(data.error || data);
-        setMessage(`❌ Metadata pin failed: ${errorText}`);
+        handleApiError('Metadata pin failed', data);
       }
     } catch (err) {
-      console.error('Metadata error:', err);
+      console.error(err);
       setMessage('❌ Metadata pin error');
     }
   };
@@ -102,93 +92,101 @@ export default function UploadFileToPinata() {
         setMinted(true);
         setMessage('🎉 NFT Minted Successfully!');
       } else {
-        const errorText =
-          typeof data.error === 'string'
-            ? data.error
-            : JSON.stringify(data.error || data);
-        setMessage(`❌ Mint failed: ${errorText}`);
+        handleApiError('Mint failed', data);
       }
     } catch (err) {
-      console.error('Mint error:', err);
+      console.error(err);
       setMessage('❌ Mint error');
     } finally {
       setMinting(false);
     }
   };
 
+  const handleApiError = (prefix: string, data: any) => {
+    const errorText =
+      typeof data?.error === 'string'
+        ? data.error
+        : JSON.stringify(data?.error || data);
+    setMessage(`❌ ${prefix}: ${errorText}`);
+  };
+
   return (
-    <div className="p-6 max-w-xl mx-auto bg-white rounded shadow space-y-4">
-      <h2 className="text-2xl font-bold">Upload Certificate</h2>
+    <section className="min-h-screen flex items-center justify-center px-4 py-16 bg-[#242424]">
+      <div className="w-full max-w-2xl bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl shadow-2xl p-6 sm:p-10 space-y-6 text-center text-white">
+        <h2 className="text-3xl md:text-4xl font-bold">
+          Mint <span className="text-purple-500">Organic Certificate</span>
+        </h2>
 
-      <input
-        type="text"
-        placeholder="Enter Certificate Name"
-        value={certName}
-        onChange={(e) => setCertName(e.target.value)}
-        className="w-full border px-3 py-2 rounded"
-      />
+        <input
+          type="text"
+          placeholder="Certificate Name"
+          value={certName}
+          onChange={(e) => setCertName(e.target.value)}
+          className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 placeholder-gray-300 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+        />
 
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleUpload}
-        className="w-full"
-      />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleUpload}
+          className="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700"
+        />
 
-      {previewUrl && (
-        <div className="mt-4">
-          <p className="text-sm text-gray-600 mb-2">🖼 Image Preview:</p>
-          <img
-            src={previewUrl}
-            alt="Preview"
-            className="w-full max-h-64 object-contain border rounded"
-          />
-        </div>
-      )}
+        {previewUrl && (
+          <div>
+            <p className="text-sm text-gray-300 mb-2">🖼 Image Preview:</p>
+            <img
+              src={previewUrl}
+              alt="Preview"
+              className="w-full max-h-64 object-contain border border-white/20 rounded-xl"
+            />
+          </div>
+        )}
 
-      {message && <p className="text-sm mt-2 text-gray-700">{message}</p>}
+        {message && <p className="text-sm text-purple-300">{message}</p>}
 
-      {ipfsHash && (
-        <p className="text-sm text-green-600">
-          🖼 Image IPFS:{' '}
-          <a
-            href={`https://gateway.pinata.cloud/ipfs/${ipfsHash}`}
-            target="_blank"
-            rel="noreferrer"
-            className="underline"
-          >
-            {ipfsHash}
-          </a>
-        </p>
-      )}
-
-      {metadataHash && (
-        <>
-          <p className="text-sm text-blue-600">
-            📄 Metadata IPFS:{' '}
+        {ipfsHash && (
+          <p className="text-sm text-green-400 break-words">
+            🖼 Image IPFS:{' '}
             <a
-              href={`https://gateway.pinata.cloud/ipfs/${metadataHash}`}
+              href={`https://gateway.pinata.cloud/ipfs/${ipfsHash}`}
               target="_blank"
               rel="noreferrer"
-              className="underline"
+              className="underline break-all"
             >
-              {metadataHash}
+              {ipfsHash}
             </a>
           </p>
+        )}
 
-          <button
-            onClick={handleMint}
-            disabled={minting || minted}
-            className={`mt-3 px-4 py-2 rounded text-white ${
-              minting || minted
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-green-600 hover:bg-green-700'
-            }`}
-          >
-            {minting ? 'Minting...' : minted ? 'Minted ✅' : 'Mint NFT'}
-          </button>
-        </>
-      )}
-    </div>
+        {metadataHash && (
+          <>
+            <p className="text-sm text-blue-400 break-words">
+              📄 Metadata IPFS:{' '}
+              <a
+                href={`https://gateway.pinata.cloud/ipfs/${metadataHash}`}
+                target="_blank"
+                rel="noreferrer"
+                className="underline break-all"
+              >
+                {metadataHash}
+              </a>
+            </p>
+
+            <button
+              onClick={handleMint}
+              disabled={minting || minted}
+              className={`mt-4 w-full py-3 rounded-xl font-semibold transition-all ${
+                minting || minted
+                  ? 'bg-gray-500 cursor-not-allowed'
+                  : 'bg-green-600 hover:bg-green-700'
+              }`}
+            >
+              {minting ? '⛏️ Minting...' : minted ? '✅ Minted' : 'Mint NFT'}
+            </button>
+          </>
+        )}
+      </div>
+    </section>
   );
 }
