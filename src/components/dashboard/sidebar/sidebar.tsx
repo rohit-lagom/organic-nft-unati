@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 const NAV_ITEMS = [
   { title: 'Overview', href: '/dashboard', icon: <Home className="w-5 h-5" /> },
   { title: 'Settings', href: '/dashboard/settings', icon: <Settings className="w-5 h-5" /> },
+  { title: 'Mint', href: '/mint', icon: <Settings className="w-5 h-5" /> },
   { title: 'Projects', href: '/dashboard/projects', icon: <ClipboardList className="w-5 h-5" />, comingSoon: true },
   { title: 'Marketplace', href: '/dashboard/marketplace', icon: <ShoppingCart className="w-5 h-5" />, comingSoon: true },
   { title: 'Orders', href: '/dashboard/orders', icon: <ShoppingCart className="w-5 h-5" />, comingSoon: true },
