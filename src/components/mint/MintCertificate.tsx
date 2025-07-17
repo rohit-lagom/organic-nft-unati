@@ -11,7 +11,9 @@ export default function UploadFileToPinata() {
   const [minted, setMinted] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-
+ type APIErrorResponse = {
+  error?: string | object;
+};
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !certName.trim() || minted) {
@@ -111,13 +113,16 @@ export default function UploadFileToPinata() {
     }
   };
 
-  const handleApiError = (prefix: string, data: any) => {
-    const errorText =
-      typeof data?.error === 'string'
-        ? data.error
-        : JSON.stringify(data?.error || data);
-    setMessage(`❌ ${prefix}: ${errorText}`);
-  };
+ 
+
+const handleApiError = (prefix: string, data: APIErrorResponse) => {
+  const errorText =
+    typeof data?.error === 'string'
+      ? data.error
+      : JSON.stringify(data?.error || data);
+  setMessage(`❌ ${prefix}: ${errorText}`);
+};
+
 
   return (
     <section className="min-h-screen flex items-center justify-center px-4 py-16 bg-[#242424]">
