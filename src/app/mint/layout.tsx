@@ -13,7 +13,6 @@ export default function MintCertificatesLayout({ children }: { children: ReactNo
     return (
 
         <section className={`${inter.className} bg-[#121212] text-white`}>
-
             <main>{children}</main>
         </section>
 

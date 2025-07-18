@@ -1,28 +1,28 @@
-import { notFound } from 'next/navigation';
-import Link from 'next/link';
+// src/app/view/[id]/page.tsx
+import { notFound } from 'next/navigation'
+import Link from 'next/link'
 
-interface Props {
-  params: {
-    id: string;
-  };
-}
-
-export default async function ViewCertificatePage({ params }: Props) {
-  const { id } =await params;
+export default async function ViewCertificatePage({
+  params,
+}: {
+  // Tell TS that params is actually a Promise
+  params: Promise<{ id: string }>
+}) {
+  // ✅ Now `await params` is valid
+  const { id } = await params
 
   const res = await fetch(`https://gateway.pinata.cloud/ipfs/${id}`, {
     cache: 'no-store',
-  });
+  })
 
-  const contentType = res.headers.get('content-type') || '';
+  const contentType = res.headers.get('content-type') ?? ''
   if (!res.ok || contentType.includes('application/json')) {
-    return notFound();
+    return notFound()
   }
 
   return (
     <section className="min-h-screen bg-[#121212] text-white px-4 py-10 flex justify-center items-center">
       <div className="relative w-full max-w-3xl text-center space-y-6 bg-[#1a1a1a] p-6 rounded-xl shadow-lg border border-white/10">
-        {/* Close Button */}
         <Link
           href="/view"
           className="absolute top-4 right-4 text-white bg-white/10 hover:bg-white/20 rounded-full p-1.5 transition"
@@ -55,5 +55,5 @@ export default async function ViewCertificatePage({ params }: Props) {
         </a>
       </div>
     </section>
-  );
+  )
 }
