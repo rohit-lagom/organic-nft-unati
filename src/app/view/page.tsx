@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 interface Pin {
   name: string;
@@ -52,9 +53,10 @@ export default function ViewPinsPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {pins.map((pin, index) => (
-              <div
+              <Link
                 key={index}
-                className="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl shadow-xl hover:shadow-2xl transition-all p-4 space-y-4"
+                href={`/view/${pin.ipfsHash}`}
+                className="block bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl shadow-xl hover:shadow-2xl transition-all p-4 space-y-4"
               >
                 <img
                   src={pin.image || `https://gateway.pinata.cloud/ipfs/${pin.ipfsHash}`}
@@ -66,22 +68,15 @@ export default function ViewPinsPage() {
                   }}
                 />
                 <div className="space-y-2">
-                  <h3 className="text-xl font-semibold text-white truncate">
-                    {pin.name}
-                  </h3>
+                  <h3 className="text-xl font-semibold text-white truncate">{pin.name}</h3>
                   <p className="text-sm text-gray-400 break-all">
                     <strong className="text-white">Hash:</strong> {pin.ipfsHash}
                   </p>
-                  <a
-                    href={`https://gateway.pinata.cloud/ipfs/${pin.ipfsHash}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block text-sm text-green-400 font-medium underline hover:text-green-300 transition"
-                  >
-                    View on IPFS ↗
-                  </a>
+                  <span className="inline-block text-sm text-green-400 font-medium underline hover:text-green-300 transition">
+                    View Certificate ↗
+                  </span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
