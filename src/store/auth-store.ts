@@ -2,23 +2,23 @@
 
 import { create } from 'zustand';
 import { generateRandomUsername } from '@/utils/username';
+import { createUser, getUser } from '@/lib/api';
 
 interface AuthState {
   walletAddress: string | null;
-  userName: string | undefined;
-  name: string | undefined;
-  email: string | undefined;
-  profileImage: string | undefined;
+  userName?: string;
+  name?: string;
+  email?: string;
+  profileImage?: string;
   isLoggedIn: boolean;
   hydrated: boolean;
   hydrate: () => void;
   setAuth: (
     walletAddress: string,
-    userName?: string,
     name?: string,
     email?: string,
     profileImage?: string
-  ) => void;
+  ) => Promise<void>;
   logout: () => void;
 }
 
@@ -49,36 +49,42 @@ export const useAuthStore = create<AuthState>((set) => ({
     });
   },
 
-  setAuth: (walletAddress, incomingUserName, incomingName, incomingEmail, incomingProfileImage) => {
-    const storedUserName = localStorage.getItem('user_name') || undefined;
-    const storedEmail = localStorage.getItem('email') || undefined;
+  setAuth: async (walletAddress, name, email, profileImage) => {
+    try {
+      const existingUser = await getUser(walletAddress);
 
-    const finalUserName = incomingUserName || storedUserName || generateRandomUsername();
-    const finalEmail = storedEmail || incomingEmail;
+      let userName = existingUser?.userName;
+      if (!userName) {
+        userName = generateRandomUsername();
+        await createUser({
+          walletAddress,
+          userName,
+          email: email || '',
+          phoneNumber: '',
+        });
+      }
 
-    localStorage.setItem('wallet_address', walletAddress);
-    localStorage.setItem('user_name', finalUserName);
-    if (incomingName) localStorage.setItem('name', incomingName);
-    if (finalEmail) localStorage.setItem('email', finalEmail);
-    if (incomingProfileImage) localStorage.setItem('profile_image', incomingProfileImage);
+      localStorage.setItem('wallet_address', walletAddress);
+      localStorage.setItem('user_name', userName);
+      if (name) localStorage.setItem('name', name);
+      if (email) localStorage.setItem('email', email);
+      if (profileImage) localStorage.setItem('profile_image', profileImage);
 
-    set({
-      walletAddress,
-      userName: finalUserName,
-      name: incomingName,
-      email: finalEmail,
-      profileImage: incomingProfileImage,
-      isLoggedIn: true,
-    });
+      set({
+        walletAddress,
+        userName,
+        name,
+        email,
+        profileImage,
+        isLoggedIn: true,
+      });
+    } catch (error) {
+      console.error('Auth error:', error);
+    }
   },
 
   logout: () => {
-    localStorage.removeItem('wallet_address');
-    localStorage.removeItem('user_name');
-    localStorage.removeItem('name');
-    localStorage.removeItem('email');
-    localStorage.removeItem('profile_image');
-
+    localStorage.clear();
     set({
       walletAddress: null,
       userName: undefined,
