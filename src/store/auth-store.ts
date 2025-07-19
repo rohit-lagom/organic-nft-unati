@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import { generateRandomUsername } from '@/utils/username';
-import { createUser, getUser } from '@/lib/api';
+import { getUser, createUser } from '@/lib/api';
 
 interface AuthState {
   walletAddress: string | null;
@@ -12,9 +12,10 @@ interface AuthState {
   profileImage?: string;
   isLoggedIn: boolean;
   hydrated: boolean;
-  hydrate: () => void;
+  hydrate: () => Promise<void>;
   setAuth: (
     walletAddress: string,
+    userName?: string,
     name?: string,
     email?: string,
     profileImage?: string
@@ -31,55 +32,70 @@ export const useAuthStore = create<AuthState>((set) => ({
   isLoggedIn: false,
   hydrated: false,
 
-  hydrate: () => {
+  hydrate: async () => {
     const walletAddress = localStorage.getItem('wallet_address');
-    const userName = localStorage.getItem('user_name') || undefined;
-    const name = localStorage.getItem('name') || undefined;
-    const email = localStorage.getItem('email') || undefined;
-    const profileImage = localStorage.getItem('profile_image') || undefined;
+    if (!walletAddress) {
+      set({ hydrated: true });
+      return;
+    }
 
-    set({
-      walletAddress,
-      userName,
-      name,
-      email,
-      profileImage,
-      isLoggedIn: !!walletAddress,
-      hydrated: true,
-    });
+    try {
+      const user = await getUser(walletAddress);
+      if (user) {
+        set({
+          walletAddress,
+          userName: user.userName,
+          name: user.name,
+          email: user.email,
+          profileImage: user.profileImage,
+          isLoggedIn: true,
+        });
+      }
+    } catch (err) {
+      console.warn('hydrate error:', err);
+    } finally {
+      set({ hydrated: true });
+    }
   },
 
-  setAuth: async (walletAddress, name, email, profileImage) => {
+  setAuth: async (
+    walletAddress,
+    incomingUserName,
+    incomingName,
+    incomingEmail,
+    incomingProfileImage
+  ) => {
     try {
-      const existingUser = await getUser(walletAddress);
+      let user = await getUser(walletAddress);
 
-      let userName = existingUser?.userName;
-      if (!userName) {
-        userName = generateRandomUsername();
-        await createUser({
+      // if no existing user, create one
+      if (!user) {
+        const finalUserName = incomingUserName || generateRandomUsername();
+        user = await createUser({
           walletAddress,
-          userName,
-          email: email || '',
+          userName: finalUserName,
+          email: incomingEmail || '',
           phoneNumber: '',
         });
       }
 
+      // persist to localStorage
       localStorage.setItem('wallet_address', walletAddress);
-      localStorage.setItem('user_name', userName);
-      if (name) localStorage.setItem('name', name);
-      if (email) localStorage.setItem('email', email);
-      if (profileImage) localStorage.setItem('profile_image', profileImage);
+      localStorage.setItem('user_name', user.userName);
+      if (incomingName) localStorage.setItem('name', incomingName);
+      if (user.email) localStorage.setItem('email', user.email);
+      if (incomingProfileImage) localStorage.setItem('profile_image', incomingProfileImage);
 
       set({
         walletAddress,
-        userName,
-        name,
-        email,
-        profileImage,
+        userName: user.userName,
+        name: incomingName,
+        email: user.email,
+        profileImage: incomingProfileImage,
         isLoggedIn: true,
       });
-    } catch (error) {
-      console.error('Auth error:', error);
+    } catch (err) {
+      console.error('setAuth error:', err);
     }
   },
 
