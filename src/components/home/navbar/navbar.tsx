@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -11,10 +11,12 @@ import {
   useWeb3AuthUser,
 } from '@web3auth/modal/react';
 import { useAccount } from 'wagmi';
+
 import NavLogo from '@/assets/images/NavLogo.png';
 import Button from '@/components/common/button/button';
 import LogoutButton from '@/components/common/button/logout-button';
 import WelcomeModal from './welcome-modal';
+
 import { useAuthStore } from '@/store/auth-store';
 import { getUser, createUser } from '@/lib/api';
 
@@ -33,9 +35,12 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
-  const [redirectAfterConnect, setRedirectAfterConnect] = useState(false);
   const [isAtTop, setIsAtTop] = useState(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const masked = walletAddress
+    ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
+    : '';
 
   const handleConnect = async () => {
     try {
@@ -44,9 +49,36 @@ export function Navbar() {
         toast.warning('Wallet not connected. Please try again.');
         return;
       }
+
+      // 1) Fetch or create user
+      let user = await getUser(address!);
+      if (!user) {
+        user = await createUser({
+          walletAddress: address!,
+          userName: web3User?.name || '',
+          email: web3User?.email || '',
+          phoneNumber: '',
+        });
+        toast.success('Account created successfully!');
+        setShowWelcome(true);
+      }
+
+      // 2) Set Zustand auth
+      setAuth(
+        address!,
+        user.userName,
+        user.name,
+        user.email,
+        user.profileImage
+      );
+
+      // 3) Redirect immediately
+      router.push('/dashboard');
     } catch (err: any) {
-      const msg = err?.message?.toLowerCase() ?? '';
-      if (msg.includes('rejected') || msg.includes('cancelled')) {
+      const msg = err.message?.toLowerCase() ?? '';
+      if (msg.includes('api') || msg.includes('failed')) {
+        toast.error(`User setup failed: ${err.message}`);
+      } else if (msg.includes('rejected') || msg.includes('cancelled')) {
         toast.warning('User rejected the wallet connection.');
       } else {
         toast.error('Connection failed. Please try again.');
@@ -54,63 +86,26 @@ export function Navbar() {
     }
   };
 
-  useEffect(() => {
-    const initAuth = async () => {
-      if (isConnected && address) {
-        // Try fetching existing user
-        const existing = await getUser(address).catch(() => null);
-
-        if (existing) {
-          setAuth(address, existing.userName, existing.name, existing.email, existing.profileImage);
-        } else {
-          // Create new user
-          try {
-            const created = await createUser({
-              walletAddress: address,
-              userName: web3User?.name || '',
-              email: web3User?.email || '',
-              phoneNumber: '',
-            });
-            setAuth(address, created.userName, created.name, created.email, created.profileImage);
-
-            if (!sessionStorage.getItem('welcome_shown')) {
-              sessionStorage.setItem('welcome_shown', 'true');
-              toast.success('Account created successfully!');
-              setTimeout(() => setShowWelcome(true), 1000);
-            }
-          } catch {
-            toast.error('Failed to create user');
-          }
-        }
-
-        if (redirectAfterConnect) {
-          router.push('/dashboard');
-          setRedirectAfterConnect(false);
-        }
-      }
-    };
-
-    initAuth();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, address, web3User, redirectAfterConnect]);
-
-  useEffect(() => {
-    const onClickOutside = (e: MouseEvent) => {
+  // close dropdown when clicking outside
+  React.useEffect(() => {
+    const handler = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setDropdownOpen(false);
       }
     };
-    document.addEventListener('mousedown', onClickOutside);
-    return () => document.removeEventListener('mousedown', onClickOutside);
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  useEffect(() => {
+  // change header bg on scroll
+  React.useEffect(() => {
     const onScroll = () => setIsAtTop(window.scrollY <= 10);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => {
+  // show connect errors
+  React.useEffect(() => {
     if (connectError) {
       const msg = connectError.message?.toLowerCase() ?? '';
       if (msg.includes('rejected') || msg.includes('cancelled')) {
@@ -120,10 +115,6 @@ export function Navbar() {
       }
     }
   }, [connectError]);
-
-  const masked = walletAddress
-    ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
-    : '';
 
   return (
     <>
@@ -149,7 +140,6 @@ export function Navbar() {
                     if (isConnected && walletAddress) {
                       router.push('/dashboard');
                     } else {
-                      setRedirectAfterConnect(true);
                       await handleConnect();
                     }
                   } else {
@@ -182,7 +172,7 @@ export function Navbar() {
 
           {/* Mobile Toggle */}
           <button
-            className="md:hidden text-white"
+            className="md:hidden text-white cursor-pointer"
             onClick={() => setMenuOpen((v) => !v)}
           >
             {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
