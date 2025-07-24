@@ -109,21 +109,30 @@ export default function SettingsPage() {
     setError(null);
     if (!validate()) return;
     try {
+      // Only update username if it was changed, otherwise use the current username
+      const newUsername = localUser.username && localUser.username !== userName ? localUser.username : userName;
       await updateUser(walletAddress ?? '', {
-        userName: localUser.username || userName,
+        userName: newUsername,
         email: localUser.email || email,
         phoneNumber: localUser.phoneNumber || '',
       });
       await setAuth(
         walletAddress ?? '',
-        localUser.username || userName,
+        newUsername,
         localUser.email || email,
         localUser.phoneNumber || ''
       );
       setIsEditing(false);
       router.push('/dashboard');
-    } catch (err) {
-      toast.error('Failed to update user.');
+    } catch (err: any) {
+      const msg = err?.message || '';
+      if (msg.toLowerCase().includes('user') && msg.toLowerCase().includes('exist')) {
+        toast.error('Username is already taken or user exists. Please choose another username.');
+      } else if (msg.toLowerCase().includes('username')) {
+        toast.error('Username is not available.');
+      } else {
+        toast.error(msg || 'Failed to update user.');
+      }
     }
   };
 
@@ -173,6 +182,7 @@ export default function SettingsPage() {
               value={localUser.email || ''}
               onChange={(e) => handleChange('email', e.target.value)}
               className="bg-transparent border-b border-white/20 text-white text-lg font-semibold focus:outline-none"
+              disabled={!!web3User?.email}
             />
           ) : (
             <p className="text-white text-lg font-semibold">{email || 'No email'}</p>

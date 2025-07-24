@@ -2,6 +2,9 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { decodeJwt } from '@/lib/jwt';
 import { getUser, createUser } from '@/lib/api';
 
+import { generateRandomUsername } from '@/utils/username'; // Adjust path as needed
+
+
 export interface AuthUser {
   walletAddress: string | null;
   userName?: string;
@@ -26,12 +29,6 @@ interface AuthContextType extends AuthUser {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Add a loginUser API call (dummy for now)
-async function loginUser(walletAddress: string): Promise<{ token?: string }> {
-  // TODO: Replace with real login endpoint if available
-  // For now, return a dummy token for testing
-  return { token: 'DUMMY.JWT.TOKEN' };
-}
 
 const creatorAvatars = [
   '/src/assets/images/creators/creator1.jpeg',
@@ -96,7 +93,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   ) => {
     try {
       // Always call createUser to get a JWT and user info for both new and existing users
-      const finalUserName = incomingUserName || 'user' + Math.floor(Math.random() * 10000);
+      const finalUserName = incomingUserName || user.userName || generateRandomUsername();
       let profileImage: string | undefined = incomingProfileImage;
       if (!profileImage) {
         profileImage = getRandomAvatar();
@@ -127,7 +124,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (err) {
       console.error('setAuth error:', err);
     }
-  }, []);
+  }, [user.userName]); // Added user.userName to dependency array
 
   // logout logic
   const logout = useCallback(() => {
