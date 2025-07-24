@@ -14,7 +14,6 @@ export default function DashboardPage() {
   const {
     walletAddress,
     userName,
-    name,
     email,
     setAuth,
   } = useAuth();
@@ -32,9 +31,8 @@ export default function DashboardPage() {
     if (isConnected && address) {
       setAuth(
         address,
-        username ?? userName,
-        web3User?.name ?? name,
-        web3User?.email ?? email
+        (username ?? userName) || '',
+        email,
       );
     }
   }, [
@@ -44,7 +42,6 @@ export default function DashboardPage() {
     walletAddress,
     setAuth,
     userName,
-    name,
     email,
   ]);
 
@@ -91,7 +88,7 @@ export default function DashboardPage() {
           <Image src={imageSrc} alt="User Avatar" width={56} height={56} className="rounded-full border border-white/10" />
           <div>
             <h2 className="text-lg font-semibold text-white">
-              Welcome, {name || web3User?.name || 'Anonymous'}
+              Welcome, {userName || web3User?.name || 'Anonymous'}
             </h2>
             <p className="text-gray-400 text-sm">@{userName || 'username'}</p>
             <p className="text-gray-400 text-sm">{email || web3User?.email || 'No email'}</p>

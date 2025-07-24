@@ -5,8 +5,8 @@ import { getUser, createUser } from '@/lib/api';
 export interface AuthUser {
   walletAddress: string | null;
   userName?: string;
-  name?: string;
   email?: string;
+  phoneNumber?: string;
   profileImage?: string;
   token?: string;
   isLoggedIn: boolean;
@@ -16,8 +16,9 @@ interface AuthContextType extends AuthUser {
   setAuth: (
     walletAddress: string,
     incomingUserName?: string,
-    incomingName?: string,
-    incomingEmail?: string
+    incomingEmail?: string,
+    incomingPhoneNumber?: string,
+    incomingProfileImage?: string // Add profile image param
   ) => Promise<void>;
   logout: () => void;
   hydrated: boolean;
@@ -32,12 +33,22 @@ async function loginUser(walletAddress: string): Promise<{ token?: string }> {
   return { token: 'DUMMY.JWT.TOKEN' };
 }
 
+const creatorAvatars = [
+  '/src/assets/images/creators/creator1.jpeg',
+  '/src/assets/images/creators/creator2.jpeg',
+  '/src/assets/images/creators/creator3.jpeg',
+  '/src/assets/images/creators/creator4.jpeg',
+];
+function getRandomAvatar() {
+  return creatorAvatars[Math.floor(Math.random() * creatorAvatars.length)];
+}
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<AuthUser>({
     walletAddress: null,
     userName: undefined,
-    name: undefined,
     email: undefined,
+    phoneNumber: undefined,
     profileImage: undefined,
     token: undefined,
     isLoggedIn: false,
@@ -46,14 +57,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Hydrate from sessionStorage
   useEffect(() => {
-    const token = sessionStorage.getItem('auth_token');
+    const token = localStorage.getItem('auth_token');
     if (!token) {
       setHydrated(true);
       return;
     }
     const payload = decodeJwt(token);
     if (!payload || !payload.walletAddress) {
-      sessionStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_token');
       setHydrated(true);
       return;
     }
@@ -63,8 +74,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUser({
             walletAddress: payload.walletAddress,
             userName: apiUser.userName,
-            name: apiUser.name,
             email: apiUser.email,
+            phoneNumber: apiUser.phoneNumber,
             profileImage: apiUser.profileImage,
             token,
             isLoggedIn: true,
@@ -79,41 +90,38 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const setAuth = useCallback(async (
     walletAddress: string,
     incomingUserName?: string,
-    incomingName?: string,
-    incomingEmail?: string
+    incomingEmail?: string,
+    incomingPhoneNumber?: string,
+    incomingProfileImage?: string // Add profile image param
   ) => {
     try {
-      let apiUser = await getUser(walletAddress);
-      let token: string | undefined = undefined;
-
-      if (!apiUser) {
-        const finalUserName = incomingUserName || 'user' + Math.floor(Math.random() * 10000);
-        const resp = await createUser({
-          walletAddress,
-          userName: finalUserName,
-          email: incomingEmail || '',
-          phoneNumber: '',
-        });
-        if (resp && resp.token) {
-          token = resp.token;
-          if (token) sessionStorage.setItem('auth_token', token);
-        }
-        apiUser = await getUser(walletAddress);
-      } else {
-        // User exists, try to get a JWT via login endpoint or fallback
-        const loginResp = await loginUser(walletAddress);
-        if (loginResp && loginResp.token) {
-          token = loginResp.token;
-          sessionStorage.setItem('auth_token', token);
-        }
+      // Always call createUser to get a JWT and user info for both new and existing users
+      const finalUserName = incomingUserName || 'user' + Math.floor(Math.random() * 10000);
+      let profileImage: string | undefined = incomingProfileImage;
+      if (!profileImage) {
+        profileImage = getRandomAvatar();
       }
+      const resp = await createUser({
+        walletAddress,
+        userName: finalUserName,
+        email: incomingEmail || '',
+        phoneNumber: incomingPhoneNumber || '',
+      });
+      console.log('createUser response:', resp);
+      let token: string | undefined = undefined;
+      if (resp && resp.token) {
+        token = resp.token;
+        console.log('Saving JWT token to localStorage:', token);
+        if (token) localStorage.setItem('auth_token', token);
+      }
+      // Use user info from resp if available, else fallback to input
       setUser({
         walletAddress,
-        userName: apiUser.userName,
-        name: incomingName ?? apiUser.name,
-        email: apiUser.email,
-        profileImage: apiUser.profileImage,
-        token: token || sessionStorage.getItem('auth_token') || undefined,
+        userName: resp.userName || finalUserName,
+        email: resp.email || incomingEmail || '',
+        phoneNumber: resp.phoneNumber || incomingPhoneNumber || '',
+        profileImage: resp.profileImage || profileImage,
+        token: token || localStorage.getItem('auth_token') || undefined,
         isLoggedIn: true,
       });
     } catch (err) {
@@ -123,12 +131,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // logout logic
   const logout = useCallback(() => {
-    sessionStorage.removeItem('auth_token');
+    localStorage.removeItem('auth_token');
     setUser({
       walletAddress: null,
       userName: undefined,
-      name: undefined,
       email: undefined,
+      phoneNumber: undefined,
       profileImage: undefined,
       token: undefined,
       isLoggedIn: false,

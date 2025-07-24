@@ -10,11 +10,11 @@ import LogoutButton from '@/components/common/button/logout-button';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/auth-context';
 import { updateUser } from '@/lib/api';
+import { toast } from 'sonner';
 
 interface LocalUser {
-  name?: string;
   email?: string;
-  profileImage?: string;
+  phoneNumber?: string;
   username?: string;
 }
 
@@ -25,8 +25,8 @@ export default function SettingsPage() {
   const {
     walletAddress,
     userName,
-    name,
     email,
+    phoneNumber,
     setAuth,
   } = useAuth();
   const { data: balanceData } = useBalance({ address });
@@ -36,18 +36,19 @@ export default function SettingsPage() {
   const [copied, setCopied] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [localUser, setLocalUser] = useState<LocalUser>({
-    name,
     email,
+    phoneNumber: phoneNumber || '',
     username: userName,
   });
   const [error, setError] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isConnected && address) {
       const username = (web3User as Record<string, unknown>)?.username as string | undefined;
-      setAuth(address, username, name, email);
+      setAuth(address, username, email, phoneNumber);
     }
-  }, [isConnected, address, web3User, setAuth, name, email]);
+  }, [isConnected, address, web3User, setAuth, email, phoneNumber]);
 
   useEffect(() => {
     const fetchNetwork = async () => {
@@ -88,24 +89,41 @@ export default function SettingsPage() {
     setLocalUser((prev) => ({ ...prev, [field]: value }));
   };
 
+  const validate = () => {
+    if (!localUser.username || localUser.username.trim() === '') {
+      toast.error('Username is required.');
+      return false;
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(localUser.username)) {
+      toast.error('Username can only contain letters, numbers, and underscores.');
+      return false;
+    }
+    if (!localUser.email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(localUser.email)) {
+      toast.error('Please enter a valid email address.');
+      return false;
+    }
+    return true;
+  };
+
   const handleSave = async () => {
     setError(null);
+    if (!validate()) return;
     try {
       await updateUser(walletAddress ?? '', {
         userName: localUser.username || userName,
         email: localUser.email || email,
-        // phoneNumber: '', // Add if you have phone number in your form
+        phoneNumber: localUser.phoneNumber || '',
       });
       await setAuth(
         walletAddress ?? '',
         localUser.username || userName,
-        localUser.name,
-        localUser.email || email
+        localUser.email || email,
+        localUser.phoneNumber || ''
       );
       setIsEditing(false);
-      router.push('/dashboard'); // optional: you can remove this if you want to stay on Settings page after save
+      router.push('/dashboard');
     } catch (err) {
-      setError('Failed to update user.');
+      toast.error('Failed to update user.');
     }
   };
 
@@ -128,26 +146,10 @@ export default function SettingsPage() {
           </button>
           <LogoutButton />
         </div>
-        {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
       </div>
 
       {/* User Info */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Name */}
-        <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
-          <h4 className="text-gray-400 text-xs mb-1">Name</h4>
-          {isEditing ? (
-            <input
-              type="text"
-              value={localUser.name || ''}
-              onChange={(e) => handleChange('name', e.target.value)}
-              className="bg-transparent border-b border-white/20 text-white text-lg font-semibold focus:outline-none"
-            />
-          ) : (
-            <p className="text-white text-lg font-semibold">{localUser.name || 'Anonymous'}</p>
-          )}
-        </div>
-
         {/* Username */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-gray-400 text-xs mb-1">Username</h4>
@@ -162,32 +164,32 @@ export default function SettingsPage() {
             <p className="text-white text-lg font-semibold">@{localUser.username || userName}</p>
           )}
         </div>
-
+        {/* Email */}
         <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
           <h4 className="text-gray-400 text-xs mb-1">Email</h4>
-          <p className="text-white text-lg">
-            {email || 'No email'}
-          </p>
-        </div>
-
-
-        {/* Profile Image */}
-        <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
-          <h4 className="text-gray-400 text-xs mb-1">Profile Image URL</h4>
           {isEditing ? (
             <input
-              type="url"
-              value={localUser.profileImage || ''}
-              onChange={(e) => handleChange('profileImage', e.target.value)}
+              type="email"
+              value={localUser.email || ''}
+              onChange={(e) => handleChange('email', e.target.value)}
               className="bg-transparent border-b border-white/20 text-white text-lg font-semibold focus:outline-none"
             />
           ) : (
-            <div className="flex items-center gap-3">
-              <Image src={imageSrc} alt="Profile" width={40} height={40} className="rounded-full border border-white/10" />
-              <span className="text-white text-sm truncate">
-                {localUser.profileImage || 'Not Set'}
-              </span>
-            </div>
+            <p className="text-white text-lg font-semibold">{email || 'No email'}</p>
+          )}
+        </div>
+        {/* Phone Number */}
+        <div className="bg-[#2a2a2a] border border-white/10 rounded-xl p-5 shadow">
+          <h4 className="text-gray-400 text-xs mb-1">Phone Number</h4>
+          {isEditing ? (
+            <input
+              type="tel"
+              value={localUser.phoneNumber || ''}
+              onChange={(e) => handleChange('phoneNumber', e.target.value)}
+              className="bg-transparent border-b border-white/20 text-white text-lg font-semibold focus:outline-none"
+            />
+          ) : (
+            <p className="text-white text-lg font-semibold">{localUser.phoneNumber || 'Not Set'}</p>
           )}
         </div>
       </div>

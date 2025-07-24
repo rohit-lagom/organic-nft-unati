@@ -1,7 +1,7 @@
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ;
 
 function authHeaders(): Record<string, string> {
-  const token = sessionStorage.getItem('auth_token');
+  const token = localStorage.getItem('auth_token');
   console.log('JWT token used for Authorization:', token); // Debug log
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
@@ -45,10 +45,14 @@ export async function createUser(user: { walletAddress: string, userName: string
 }
 
 export async function updateUser(walletAddress: string, updates: { userName?: string, email?: string, phoneNumber?: string }) {
+  const payload = { walletAddress, ...updates };
+  const headers = { 'Content-Type': 'application/json', ...authHeaders() };
+  console.log('PATCH /users payload:', payload);
+  console.log('PATCH /users headers:', headers);
   const res = await fetch(`${BASE_URL}/users`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...authHeaders() },
-    body: JSON.stringify({ walletAddress, ...updates }),
+    headers,
+    body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error('Failed to update user');
   return res.json();
