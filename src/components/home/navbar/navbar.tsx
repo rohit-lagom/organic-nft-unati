@@ -14,7 +14,7 @@ import { useAccount } from 'wagmi';
 import NavLogo from '@/assets/images/NavLogo.png';
 import Button from '@/components/common/button/button';
 import LogoutButton from '@/components/common/button/logout-button';
-import { useAuthStore } from '@/store/auth-store';
+import { useAuth } from '@/context/auth-context';
 import WelcomeModal from './welcome-modal';
 
 const navLinks = [
@@ -30,7 +30,7 @@ export function Navbar() {
   } = useWeb3AuthConnect();
   const { userInfo: web3User } = useWeb3AuthUser();
   const { address, isConnected } = useAccount();
-  const { walletAddress, userName, setAuth } = useAuthStore();
+  const { walletAddress, userName, setAuth } = useAuth();
   const router = useRouter();
 
   const [menuOpen, setMenuOpen] = useState(false);

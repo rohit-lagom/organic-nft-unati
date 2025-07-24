@@ -8,7 +8,8 @@ import { useEffect, useState } from 'react';
 import { formatEther } from 'viem';
 import LogoutButton from '@/components/common/button/logout-button';
 import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/store/auth-store';
+import { useAuth } from '@/context/auth-context';
+import { updateUser } from '@/lib/api';
 
 interface LocalUser {
   name?: string;
@@ -26,9 +27,8 @@ export default function SettingsPage() {
     userName,
     name,
     email,
-    profileImage,
     setAuth,
-  } = useAuthStore();
+  } = useAuth();
   const { data: balanceData } = useBalance({ address });
 
   const [networkName, setNetworkName] = useState('Loading...');
@@ -38,16 +38,16 @@ export default function SettingsPage() {
   const [localUser, setLocalUser] = useState<LocalUser>({
     name,
     email,
-    profileImage,
     username: userName,
   });
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isConnected && address) {
       const username = (web3User as Record<string, unknown>)?.username as string | undefined;
-      setAuth(address, username, name, email, profileImage);
+      setAuth(address, username, name, email);
     }
-  }, [isConnected, address, web3User, setAuth, name, email, profileImage]);
+  }, [isConnected, address, web3User, setAuth, name, email]);
 
   useEffect(() => {
     const fetchNetwork = async () => {
@@ -88,19 +88,28 @@ export default function SettingsPage() {
     setLocalUser((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSave = () => {
-    setAuth(
-      walletAddress ?? '',
-      localUser.username || userName,
-      localUser.name,
-      email,
-      localUser.profileImage
-    );
-    setIsEditing(false);
-    router.push('/dashboard'); // optional: you can remove this if you want to stay on Settings page after save
+  const handleSave = async () => {
+    setError(null);
+    try {
+      await updateUser(walletAddress ?? '', {
+        userName: localUser.username || userName,
+        email: localUser.email || email,
+        // phoneNumber: '', // Add if you have phone number in your form
+      });
+      await setAuth(
+        walletAddress ?? '',
+        localUser.username || userName,
+        localUser.name,
+        localUser.email || email
+      );
+      setIsEditing(false);
+      router.push('/dashboard'); // optional: you can remove this if you want to stay on Settings page after save
+    } catch (err) {
+      setError('Failed to update user.');
+    }
   };
 
-  const imageSrc = localUser?.profileImage?.trim() ? localUser.profileImage : '/Avatar.jpg';
+  const imageSrc = web3User?.profileImage?.trim() ? web3User.profileImage : '/Avatar.jpg';
 
   return (
     <div className="space-y-8">
@@ -119,6 +128,7 @@ export default function SettingsPage() {
           </button>
           <LogoutButton />
         </div>
+        {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
       </div>
 
       {/* User Info */}

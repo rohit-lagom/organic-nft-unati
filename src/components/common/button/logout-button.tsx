@@ -4,6 +4,7 @@ import { useWeb3AuthDisconnect } from '@web3auth/modal/react';
 import { useRouter } from 'next/navigation';
 import { LogOut } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/context/auth-context';
 
 export default function LogoutButton() {
   const { disconnect, loading } = useWeb3AuthDisconnect();
@@ -11,6 +12,7 @@ export default function LogoutButton() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { logout } = useAuth();
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -20,6 +22,7 @@ export default function LogoutButton() {
       await disconnect();
       localStorage.removeItem('organic-user');
       localStorage.removeItem('organic-wallet');
+      logout();
       router.push('/');
     } catch (err) {
       console.error(err);

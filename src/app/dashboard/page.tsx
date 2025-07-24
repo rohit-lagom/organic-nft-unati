@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { formatEther } from 'viem';
 import LogoutButton from '@/components/common/button/logout-button';
-import { useAuthStore } from '@/store/auth-store';
+import { useAuth } from '@/context/auth-context';
 
 export default function DashboardPage() {
   const { userInfo: web3User } = useWeb3AuthUser();
@@ -16,9 +16,8 @@ export default function DashboardPage() {
     userName,
     name,
     email,
-    profileImage,
     setAuth,
-  } = useAuthStore();
+  } = useAuth();
   const { address, connector, isConnected } = useAccount();
   const { data: balanceData } = useBalance({ address });
 
@@ -35,8 +34,7 @@ export default function DashboardPage() {
         address,
         username ?? userName,
         web3User?.name ?? name,
-        web3User?.email ?? email,
-        web3User?.profileImage ?? profileImage
+        web3User?.email ?? email
       );
     }
   }, [
@@ -48,7 +46,6 @@ export default function DashboardPage() {
     userName,
     name,
     email,
-    profileImage,
   ]);
 
   // Fetch Network Name
@@ -84,7 +81,7 @@ export default function DashboardPage() {
   const maskedAddress =
     walletAddress && masked ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : walletAddress;
 
-  const imageSrc = profileImage?.trim() ? profileImage : '/Avatar.jpg';
+  const imageSrc = web3User?.profileImage?.trim() ? web3User.profileImage : '/Avatar.jpg';
 
   return (
     <div className="space-y-8">
