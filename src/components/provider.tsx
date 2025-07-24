@@ -3,7 +3,6 @@
 // IMP START - Setup Web3Auth Provider
 import { Web3AuthProvider, type Web3AuthContextConfig } from "@web3auth/modal/react";
 import { IWeb3AuthState, WEB3AUTH_NETWORK } from "@web3auth/modal";
-import { mainnet, polygon, goerli } from "wagmi/chains";
 // IMP END - Setup Web3Auth Provider
 // IMP START - Setup Wagmi Provider
 import { WagmiProvider } from "@web3auth/modal/react/wagmi";

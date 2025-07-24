@@ -27,49 +27,6 @@ export default function UploadFileToPinata() {
     setPreviewUrl(URL.createObjectURL(file));
   };
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !certName.trim() || minted) {
-      setMessage('❌ Please enter a certificate name and select an image file.');
-      return;
-    }
-
-    if (!file.type.startsWith('image/')) {
-      setMessage('❌ Only image files are allowed.');
-      return;
-    }
-
-    setPreviewUrl(URL.createObjectURL(file));
-    setUploading(true);
-    setMessage('⏳ Uploading file...');
-
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('name', certName);
-
-    try {
-      const res = await fetch('/api/pinata/upload-file', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (res.ok && data.IpfsHash) {
-        setIpfsHash(data.IpfsHash);
-        setMessage('✅ Image uploaded! Pinning metadata...');
-        await pinMetadata(data.IpfsHash);
-      } else {
-        handleApiError('Upload failed', data);
-      }
-    } catch (err) {
-      console.error(err);
-      setMessage('❌ Upload error. Please try again.');
-    } finally {
-      setUploading(false);
-    }
-  };
-
   const pinMetadata = async (imageHash: string) => {
     const metadata = {
       name: certName,
@@ -160,17 +117,21 @@ export default function UploadFileToPinata() {
       // Fetch transaction hash from certificates
       try {
         const certs = await getCertificatesByOwner(walletAddress);
-        const cert = certs.find((c: any) => c.tokenId === result.tokenId);
+        const cert = certs.find((c: { tokenId: number }) => c.tokenId === result.tokenId);
         if (cert && cert.transactionHash) {
           setTransactionHash(cert.transactionHash);
         }
-      } catch (e) {
+      } catch {
         setTransactionHash(null);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setMessage('❌ Mint error.');
       toast.error('Mint error.');
-      console.error(err);
+      if (err instanceof Error) {
+        console.error(err.message);
+      } else {
+        console.error(err);
+      }
     } finally {
       setMinting(false);
     }
@@ -178,11 +139,14 @@ export default function UploadFileToPinata() {
 
  
 
-const handleApiError = (prefix: string, data: APIErrorResponse) => {
-  const errorText =
-    typeof data?.error === 'string'
-      ? data.error
-      : JSON.stringify(data?.error || data);
+const handleApiError = (prefix: string, data: unknown) => {
+  let errorText = '';
+  if (typeof data === 'object' && data !== null && 'error' in data) {
+    const errVal = (data as { error?: unknown }).error;
+    errorText = typeof errVal === 'string' ? errVal : JSON.stringify(errVal);
+  } else {
+    errorText = JSON.stringify(data);
+  }
   setMessage(`❌ ${prefix}: ${errorText}`);
 };
 

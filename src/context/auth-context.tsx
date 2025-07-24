@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { decodeJwt } from '@/lib/jwt';
 import { getUser, createUser } from '@/lib/api';
 
-import { generateRandomUsername } from '@/utils/username'; // Adjust path as needed
+import { generateRandomUsername } from '@/utils/username'; 
 
 
 export interface AuthUser {
@@ -21,7 +21,7 @@ interface AuthContextType extends AuthUser {
     incomingUserName?: string,
     incomingEmail?: string,
     incomingPhoneNumber?: string,
-    incomingProfileImage?: string // Add profile image param
+    incomingProfileImage?: string 
   ) => Promise<void>;
   logout: () => void;
   hydrated: boolean;

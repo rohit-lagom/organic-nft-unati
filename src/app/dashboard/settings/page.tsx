@@ -40,8 +40,6 @@ export default function SettingsPage() {
     phoneNumber: phoneNumber || '',
     username: userName,
   });
-  const [error, setError] = useState<string | null>(null);
-  const [validationError, setValidationError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isConnected && address) {
@@ -106,7 +104,6 @@ export default function SettingsPage() {
   };
 
   const handleSave = async () => {
-    setError(null);
     if (!validate()) return;
     try {
       // Only update username if it was changed, otherwise use the current username
@@ -124,8 +121,11 @@ export default function SettingsPage() {
       );
       setIsEditing(false);
       router.push('/dashboard');
-    } catch (err: any) {
-      const msg = err?.message || '';
+    } catch (err: unknown) {
+      let msg = '';
+      if (err instanceof Error) {
+        msg = err.message;
+      }
       if (msg.toLowerCase().includes('user') && msg.toLowerCase().includes('exist')) {
         toast.error('Username is already taken or user exists. Please choose another username.');
       } else if (msg.toLowerCase().includes('username')) {
